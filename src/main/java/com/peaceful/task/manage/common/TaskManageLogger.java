@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
  * @since 1.6
  */
 
-public class QueueLogger {
-    public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger("QUEUE.SERVICE");
+public class TaskManageLogger {
+    public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger("com.peaceful.task.manage.common.TaskManage");
 
 }

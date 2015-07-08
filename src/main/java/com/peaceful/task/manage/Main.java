@@ -14,8 +14,8 @@ public class Main {
 
     public static void main(String[] args) {
         ActorSystem system = ActorSystem.create("MySystem");
-        QueueServiceStart.setSystem(system);
-        QueueServiceStart.run();
+        TaskManageStart.setSystem(system);
+        TaskManageStart.run();
     }
 
 }

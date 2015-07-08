@@ -6,12 +6,12 @@ package com.peaceful.task.manage.exception;
  * @since 1.6
  */
 
-public class QueueServiceConfigException extends RuntimeException {
+public class TaskManageConfigException extends RuntimeException {
 
-    public QueueServiceConfigException(String msg){
+    public TaskManageConfigException(String msg){
         super(msg);
     }
-    public QueueServiceConfigException(Throwable e){
+    public TaskManageConfigException(Throwable e){
         super(e);
     }
 }

@@ -1,6 +1,6 @@
 package com.peaceful.task.manage.service.impl;
 
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.task.manage.repo.Queue;
 import com.peaceful.task.manage.service.MontiorQueue;
 import com.google.common.collect.Maps;
@@ -19,7 +19,7 @@ public class MonitorQueueImpl implements MontiorQueue {
     public static int pressure = 0;
     public final static AtomicLong commitCount = new AtomicLong(0);
 
-    QueueTaskConf queueTaskConf = QueueTaskConf.getConf();
+    TaskManageConf queueTaskConf = TaskManageConf.getConf();
 
     public List<String> getAllQueue() {
         return queueTaskConf.queues;

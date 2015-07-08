@@ -9,7 +9,7 @@ import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
 import com.peaceful.task.manage.msg.Coordination;
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.task.manage.msg.OpenValve;
 import com.peaceful.task.manage.msg.Task;
 import com.peaceful.task.manage.repo.Queue;
@@ -33,7 +33,7 @@ public class DispatchActor extends UntypedActor {
 
     {
         List<Routee> routees = new ArrayList<Routee>();
-        for (int i = 0; i < QueueTaskConf.getConf().execParallel; i++) {
+        for (int i = 0; i < TaskManageConf.getConf().execParallel; i++) {
             ActorRef r = getContext().actorOf(Props.create(WorkActor.class));
             getContext().watch(r);
             routees.add(new ActorRefRoutee(r));
@@ -53,7 +53,7 @@ public class DispatchActor extends UntypedActor {
             log.debug(getSender().path().toSerializationFormat() + " receive worker  msg");
             pressure.decrementAndGet();
             MonitorQueueImpl.pressure = pressure.get();
-            if (pressure.get() >= QueueTaskConf.getConf().execParallel) {
+            if (pressure.get() >= TaskManageConf.getConf().execParallel) {
                 //pass
             } else {
                 Coordination coordination = (Coordination) msg;
@@ -83,7 +83,7 @@ public class DispatchActor extends UntypedActor {
         } else {
             unhandled(msg);
         }
-        if (pressure.get() > (QueueTaskConf.getConf().dangerParallel + 2)) {
+        if (pressure.get() > (TaskManageConf.getConf().dangerParallel + 2)) {
             pressure.set(0);
             Thread.sleep(500);
         }

@@ -3,8 +3,8 @@ package com.peaceful.task.manage;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import com.peaceful.task.manage.common.QueueLogger;
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageLogger;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.task.manage.msg.Task;
 import com.peaceful.task.manage.process.QueueSuperviseActor;
 import com.peaceful.task.manage.repo.Queue;
@@ -19,18 +19,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by wangjun on 15/1/22.
  */
-public class QueueServiceStart {
+public class TaskManageStart {
 
-    private static Logger LOGGER = QueueLogger.LOGGER;
+    private static Logger LOGGER = TaskManageLogger.LOGGER;
 
     private static ActorSystem system;
 
     public static void setSystem(ActorSystem system) {
-        QueueServiceStart.system = system;
+        TaskManageStart.system = system;
     }
 
     public static ActorSystem getSystem() {
-        return QueueServiceStart.system;
+        return TaskManageStart.system;
     }
 
 
@@ -42,7 +42,7 @@ public class QueueServiceStart {
                     public void run() {
                         LOGGER.debug("queue service monitor ...");
                         try {
-                            List<String> queues = QueueTaskConf.getConf().queues;
+                            List<String> queues = TaskManageConf.getConf().queues;
                             for (String q : queues) {
                                 String taskJson = Queue.rpop(q);
                                 Task task = null;

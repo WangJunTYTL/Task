@@ -6,7 +6,7 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.task.manage.msg.OpenValve;
 import com.peaceful.task.manage.msg.Task;
 import com.peaceful.task.manage.service.MontiorQueue;
@@ -27,7 +27,7 @@ public class QueueSuperviseActor extends UntypedActor {
 
     {
         List<Routee> routees = new ArrayList<Routee>();
-        for (int i = 0; i < QueueTaskConf.getConf().dispatchParallel; i++) {
+        for (int i = 0; i < TaskManageConf.getConf().dispatchParallel; i++) {
             ActorRef r = getContext().actorOf(Props.create(DispatchActor.class));
             getContext().watch(r);
             routees.add(new ActorRefRoutee(r));

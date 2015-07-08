@@ -3,7 +3,7 @@ package com.peaceful.task.manage.process;
 import akka.actor.UntypedActor;
 import akka.event.DiagnosticLoggingAdapter;
 import akka.event.Logging;
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.task.manage.msg.Coordination;
 import com.peaceful.task.manage.msg.Task;
 import net.sf.cglib.reflect.FastClass;
@@ -22,9 +22,9 @@ public class WorkActor extends UntypedActor {
     Class<?> aClass;
 
     {
-        aClass = QueueTaskConf.getConf().aClass;
+        aClass = TaskManageConf.getConf().aClass;
         fastClass = FastClass.create(aClass);
-        processQueue = QueueTaskConf.getConf().processQueueInstance;
+        processQueue = TaskManageConf.getConf().processQueueInstance;
     }
 
     @Override

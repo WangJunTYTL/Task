@@ -1,7 +1,7 @@
 package com.peaceful.task.manage.job;
 
 import akka.actor.Cancellable;
-import com.peaceful.task.manage.QueueServiceStart;
+import com.peaceful.task.manage.TaskManageStart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.concurrent.duration.Duration;
@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  * @since 1.6
  */
 
-public abstract class EdaijiaJob {
+public abstract class TaskManageSchedule {
 
-    public static Logger logger = LoggerFactory.getLogger(EdaijiaJob.class);
+    public static Logger logger = LoggerFactory.getLogger(TaskManageSchedule.class);
     private static Map<String, Job> jobContainer = new ConcurrentHashMap<String, Job>();
     private static Map<String, Cancellable> startContainer = new ConcurrentHashMap<String, Cancellable>();
 
@@ -51,7 +51,7 @@ public abstract class EdaijiaJob {
     }
 
     public static void scheduleOnce(long delay, TimeUnit timeUnit, final String jobName) {
-        QueueServiceStart.getSystem().scheduler().scheduleOnce(Duration.create(delay, timeUnit),
+        TaskManageStart.getSystem().scheduler().scheduleOnce(Duration.create(delay, timeUnit),
                 new Runnable() {
                     @Override
                     public void run() {
@@ -63,11 +63,11 @@ public abstract class EdaijiaJob {
                             logger.error("job error ", e);
                         }
                     }
-                }, QueueServiceStart.getSystem().dispatcher());
+                }, TaskManageStart.getSystem().dispatcher());
     }
 
     public static void scheduleOnce(long delay, TimeUnit timeUnit, final Job job) {
-        QueueServiceStart.getSystem().scheduler().scheduleOnce(Duration.create(delay, timeUnit),
+        TaskManageStart.getSystem().scheduler().scheduleOnce(Duration.create(delay, timeUnit),
                 new Runnable() {
                     @Override
                     public void run() {
@@ -77,14 +77,14 @@ public abstract class EdaijiaJob {
                             logger.error("job error ", e);
                         }
                     }
-                }, QueueServiceStart.getSystem().dispatcher());
+                }, TaskManageStart.getSystem().dispatcher());
     }
 
     public static void schedule(FiniteDuration startTime, long delay, TimeUnit timeUnit, final String jobName) {
         if (startContainer.containsKey(jobName))
             throw new RuntimeException("this job  " + jobName + " has start");
         Cancellable cancellable =
-                QueueServiceStart.getSystem().scheduler().schedule(startTime, Duration.create(delay, timeUnit),
+                TaskManageStart.getSystem().scheduler().schedule(startTime, Duration.create(delay, timeUnit),
                         new Runnable() {
                             @Override
                             public void run() {
@@ -96,7 +96,7 @@ public abstract class EdaijiaJob {
                                     logger.error("job error ", e);
                                 }
                             }
-                        }, QueueServiceStart.getSystem().dispatcher());
+                        }, TaskManageStart.getSystem().dispatcher());
         if (startContainer.containsKey(jobName))
             throw new RuntimeException("this job  " + jobName + " is exist");
         startContainer.put(jobName, cancellable);

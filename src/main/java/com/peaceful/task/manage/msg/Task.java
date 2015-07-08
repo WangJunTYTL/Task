@@ -1,6 +1,6 @@
 package com.peaceful.task.manage.msg;
 
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.task.manage.exception.AddTaskQueueException;
 import com.peaceful.task.manage.exception.NotFindQueueException;
 import com.peaceful.task.manage.repo.Queue;
@@ -53,7 +53,7 @@ public class Task implements Serializable {
     }
 
     public Task(String queueName, String method, Map<String, Object> params) {
-        if (QueueTaskConf.getConf().queues.contains(queueName)) {
+        if (TaskManageConf.getConf().queues.contains(queueName)) {
             this.id = System.currentTimeMillis();
         } else {
             throw new NotFindQueueException(queueName);

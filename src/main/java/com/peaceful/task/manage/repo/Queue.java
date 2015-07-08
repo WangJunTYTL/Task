@@ -1,7 +1,7 @@
 package com.peaceful.task.manage.repo;
 
-import com.peaceful.task.manage.common.QueueLogger;
-import com.peaceful.task.manage.common.QueueTaskConf;
+import com.peaceful.task.manage.common.TaskManageLogger;
+import com.peaceful.task.manage.common.TaskManageConf;
 import com.peaceful.common.redis.proxy.JedisPoolServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
@@ -23,10 +23,10 @@ public class Queue {
     public static String rpop(String key) {
         stopWatch.stop();
         if (isLock(key)) {
-            QueueLogger.LOGGER.warn("please note , key is {}, is locked", key);
+            TaskManageLogger.LOGGER.warn("please note , key is {}, is locked", key);
             return null;
         }
-        key += ("_" + QueueTaskConf.getConf().projectName);
+        key += ("_" + TaskManageConf.getConf().projectName);
         Jedis jedis = jedisPool.getResource();
         String res = null;
         try {
@@ -42,7 +42,7 @@ public class Queue {
 
     public static Long lpush(String key, String value) {
         stopWatch.stop();
-        key += ("_" + QueueTaskConf.getConf().projectName);
+        key += ("_" + TaskManageConf.getConf().projectName);
         Jedis jedis = jedisPool.getResource();
         Long res = null;
         try {
@@ -57,7 +57,7 @@ public class Queue {
     }
 
     public static Long llen(String key) {
-        key += ("_" + QueueTaskConf.getConf().projectName);
+        key += ("_" + TaskManageConf.getConf().projectName);
         Jedis jedis = jedisPool.getResource();
         Long res = null;
         try {
@@ -71,7 +71,7 @@ public class Queue {
     }
 
     public static String lock(String key) {
-        key += ("_" + QueueTaskConf.getConf().projectName + "_lock");
+        key += ("_" + TaskManageConf.getConf().projectName + "_lock");
         Jedis jedis = jedisPool.getResource();
         String res = null;
         try {
@@ -84,7 +84,7 @@ public class Queue {
     }
 
     public static boolean isLock(String key) {
-        key += ("_" + QueueTaskConf.getConf().projectName + "_lock");
+        key += ("_" + TaskManageConf.getConf().projectName + "_lock");
         Jedis jedis = jedisPool.getResource();
         String res = null;
         try {
@@ -99,7 +99,7 @@ public class Queue {
     }
 
     public static Long unLock(String key) {
-        key += ("_" + QueueTaskConf.getConf().projectName + "_lock");
+        key += ("_" + TaskManageConf.getConf().projectName + "_lock");
         Jedis jedis = jedisPool.getResource();
         Long res = null;
         try {

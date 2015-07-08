@@ -1,6 +1,6 @@
 package com.peaceful.task.manage.common;
 
-import com.peaceful.task.manage.exception.QueueServiceConfigException;
+import com.peaceful.task.manage.exception.TaskManageConfigException;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +14,7 @@ import java.util.List;
  * @since 1.6
  */
 
-public class QueueTaskConf {
+public class TaskManageConf {
 
     public String projectName = "default";
     public int dispatchParallel = 2;
@@ -31,40 +31,40 @@ public class QueueTaskConf {
     public Class aClass;
     public Object processQueueInstance;
 
-    Logger logger = QueueLogger.LOGGER;
+    Logger logger = TaskManageLogger.LOGGER;
 
-    public QueueTaskConf() {
-        Config config = ConfigFactory.load("queueService.conf");
+    public TaskManageConf() {
+        Config config = ConfigFactory.load("TaskManage.conf");
         try {
-            config.getString("QueueService.version");
-            if (StringUtils.isNotEmpty(config.getString("QueueService.router"))) {
-                dispatchParallel = config.getInt("QueueService.router");
+            config.getString("TaskManage.version");
+            if (StringUtils.isNotEmpty(config.getString("TaskManage.router"))) {
+                dispatchParallel = config.getInt("TaskManage.router");
             }
-            if (StringUtils.isNotEmpty(config.getString("QueueService.worker"))) {
-                execParallel = config.getInt("QueueService.worker");
+            if (StringUtils.isNotEmpty(config.getString("TaskManage.worker"))) {
+                execParallel = config.getInt("TaskManage.worker");
             }
-            if (StringUtils.isNotEmpty(config.getString("QueueService.alertPhone"))) {
-                alertPhone = config.getString("QueueService.alertPhone");
+            if (StringUtils.isNotEmpty(config.getString("TaskManage.alertPhone"))) {
+                alertPhone = config.getString("TaskManage.alertPhone");
             }
         } catch (Exception e) {
             logger.warn("current version is too low ,please upgrade!");
-            if (StringUtils.isNotEmpty(config.getString("QueueService.DispatchParallel"))) {
-                dispatchParallel = config.getInt("QueueService.DispatchParallel");
+            if (StringUtils.isNotEmpty(config.getString("TaskManage.DispatchParallel"))) {
+                dispatchParallel = config.getInt("TaskManage.DispatchParallel");
             }
-            if (StringUtils.isNotEmpty(config.getString("QueueService.ExecParallel"))) {
-                execParallel = config.getInt("QueueService.ExecParallel");
+            if (StringUtils.isNotEmpty(config.getString("TaskManage.ExecParallel"))) {
+                execParallel = config.getInt("TaskManage.ExecParallel");
             }
         }
 
 
-        if (StringUtils.isNotEmpty(config.getString("QueueService.ProjectName"))) {
-            projectName = config.getString("QueueService.ProjectName");
+        if (StringUtils.isNotEmpty(config.getString("TaskManage.ProjectName"))) {
+            projectName = config.getString("TaskManage.ProjectName");
         }
-        if (StringUtils.isNotEmpty(config.getString("QueueService.ProcessQueueClass"))) {
-            processQueueClass = config.getString("QueueService.ProcessQueueClass");
+        if (StringUtils.isNotEmpty(config.getString("TaskManage.ProcessQueueClass"))) {
+            processQueueClass = config.getString("TaskManage.ProcessQueueClass");
         } else {
             LOAD_STATE = FAIL_LOAD;
-            throw new QueueServiceConfigException("ProcessQueueClass is empty");
+            throw new TaskManageConfigException("ProcessQueueClass is empty");
         }
         try {
             aClass = Class.forName(processQueueClass);
@@ -72,17 +72,17 @@ public class QueueTaskConf {
             processQueueInstance = aClass.newInstance();
         } catch (ClassNotFoundException e) {
             LOAD_STATE = FAIL_LOAD;
-            throw new QueueServiceConfigException(e);
+            throw new TaskManageConfigException(e);
         } catch (InstantiationException e) {
             LOAD_STATE = FAIL_LOAD;
-            throw new QueueServiceConfigException(e);
+            throw new TaskManageConfigException(e);
         } catch (IllegalAccessException e) {
             LOAD_STATE = FAIL_LOAD;
-            throw new QueueServiceConfigException(e);
+            throw new TaskManageConfigException(e);
         }
         maxParallel = dispatchParallel * execParallel;
         dangerParallel = dispatchParallel + execParallel;
-        queues = config.getStringList("QueueService.QueueList");
+        queues = config.getStringList("TaskManage.QueueList");
         logger.info("------------queueService load conf-------------------------");
         logger.info("projectName:{}", projectName);
         logger.info("dispatchParallel:{}", dispatchParallel);
@@ -94,9 +94,9 @@ public class QueueTaskConf {
         LOAD_STATE = SUC_LOAD;
     }
 
-    public static synchronized QueueTaskConf getConf() {
-        QueueTaskConf conf = getInstance.queueTaskConf;
-        if (QueueTaskConf.LOAD_STATE == SUC_LOAD)
+    public static synchronized TaskManageConf getConf() {
+        TaskManageConf conf = getInstance.queueTaskConf;
+        if (TaskManageConf.LOAD_STATE == SUC_LOAD)
             return conf;
         else
             return null;
@@ -104,7 +104,7 @@ public class QueueTaskConf {
 
     private static class getInstance {
 
-        public static QueueTaskConf queueTaskConf = new QueueTaskConf();
+        public static TaskManageConf queueTaskConf = new TaskManageConf();
     }
 
 }
