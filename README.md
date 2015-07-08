@@ -42,7 +42,7 @@
              worker:6 
          
              # 具体业务处理类 
-             ProcessQueueClass:"cn.edaijia.crm.task.ProcessQueue" 
+             ProcessQueueClass:"com.peaceful.task.example.ProcessQueue" 
          
          } 
 
@@ -66,7 +66,7 @@
 
 二、 单独的jar文件：
 
-程序入口：`cn.edaijia.queue.Main `
+程序入口：`com.peaceful.task.manage.Main `
 
 
 ##### 添加任务
