@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  * @since 1.6
  */
 
-public abstract class TaskManageSchedule {
+public abstract class TaskSchedule {
 
-    public static Logger logger = LoggerFactory.getLogger(TaskManageSchedule.class);
+    public static Logger logger = LoggerFactory.getLogger(TaskSchedule.class);
     private static Map<String, Job> jobContainer = new ConcurrentHashMap<String, Job>();
     private static Map<String, Cancellable> startContainer = new ConcurrentHashMap<String, Cancellable>();
 

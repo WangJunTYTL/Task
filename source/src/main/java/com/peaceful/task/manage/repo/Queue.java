@@ -17,7 +17,7 @@ import redis.clients.jedis.JedisPool;
 
 public class Queue {
 
-    private static JedisPool jedisPool = JedisPoolServiceImpl.getJedisPoolService().getJedisPoolByHostName("haproxy");
+    private static JedisPool jedisPool = JedisPoolServiceImpl.getJedisPoolService().getJedisPoolByHostName(TaskManageConf.getConf().redisNode);
     private static StopWatch stopWatch = new Log4JStopWatch();
 
     public static String rpop(String key) {

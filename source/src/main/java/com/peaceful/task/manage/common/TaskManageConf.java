@@ -17,6 +17,7 @@ import java.util.List;
 public class TaskManageConf {
 
     public String projectName = "default";
+    public String redisNode = "haproxy";
     public int dispatchParallel = 2;
     public int execParallel = 6;
     public int maxParallel = 0;
@@ -34,37 +35,39 @@ public class TaskManageConf {
     Logger logger = TaskManageLogger.LOGGER;
 
     public TaskManageConf() {
-        Config config = ConfigFactory.load("TaskManage.conf");
+        Config config = ConfigFactory.load("taskManage.conf");
         try {
-            config.getString("TaskManage.version");
-            if (StringUtils.isNotEmpty(config.getString("TaskManage.router"))) {
-                dispatchParallel = config.getInt("TaskManage.router");
+            config.getString("taskManage.version");
+            if (StringUtils.isNotEmpty(config.getString("taskManage.router"))) {
+                dispatchParallel = config.getInt("taskManage.router");
             }
-            if (StringUtils.isNotEmpty(config.getString("TaskManage.worker"))) {
-                execParallel = config.getInt("TaskManage.worker");
+            if (StringUtils.isNotEmpty(config.getString("taskManage.worker"))) {
+                execParallel = config.getInt("taskManage.worker");
             }
-            if (StringUtils.isNotEmpty(config.getString("TaskManage.alertPhone"))) {
-                alertPhone = config.getString("TaskManage.alertPhone");
+            if (StringUtils.isNotEmpty(config.getString("taskManage.alertPhone"))) {
+                alertPhone = config.getString("taskManage.alertPhone");
             }
         } catch (Exception e) {
             logger.warn("current version is too low ,please upgrade!");
-            if (StringUtils.isNotEmpty(config.getString("TaskManage.DispatchParallel"))) {
-                dispatchParallel = config.getInt("TaskManage.DispatchParallel");
+            if (StringUtils.isNotEmpty(config.getString("taskManage.DispatchParallel"))) {
+                dispatchParallel = config.getInt("taskManage.DispatchParallel");
             }
-            if (StringUtils.isNotEmpty(config.getString("TaskManage.ExecParallel"))) {
-                execParallel = config.getInt("TaskManage.ExecParallel");
+            if (StringUtils.isNotEmpty(config.getString("taskManage.ExecParallel"))) {
+                execParallel = config.getInt("taskManage.ExecParallel");
             }
         }
 
-
-        if (StringUtils.isNotEmpty(config.getString("TaskManage.ProjectName"))) {
-            projectName = config.getString("TaskManage.ProjectName");
+        if (StringUtils.isNotEmpty(config.getString("taskManage.redisNode"))) {
+            redisNode = config.getString("taskManage.redisNode");
         }
-        if (StringUtils.isNotEmpty(config.getString("TaskManage.ProcessQueueClass"))) {
-            processQueueClass = config.getString("TaskManage.ProcessQueueClass");
+        if (StringUtils.isNotEmpty(config.getString("taskManage.projectName"))) {
+            projectName = config.getString("taskManage.projectName");
+        }
+        if (StringUtils.isNotEmpty(config.getString("taskManage.processTaskClass"))) {
+            processQueueClass = config.getString("taskManage.processTaskClass");
         } else {
             LOAD_STATE = FAIL_LOAD;
-            throw new TaskManageConfigException("ProcessQueueClass is empty");
+            throw new TaskManageConfigException("processTaskClass is empty");
         }
         try {
             aClass = Class.forName(processQueueClass);
@@ -82,14 +85,14 @@ public class TaskManageConf {
         }
         maxParallel = dispatchParallel * execParallel;
         dangerParallel = dispatchParallel + execParallel;
-        queues = config.getStringList("TaskManage.QueueList");
+        queues = config.getStringList("taskManage.queueList");
         logger.info("------------queueService load conf-------------------------");
         logger.info("projectName:{}", projectName);
         logger.info("dispatchParallel:{}", dispatchParallel);
         logger.info("execParallel:{}", dispatchParallel);
         logger.info("maxParallel:{}", maxParallel);
         logger.info("queueList:{}", queues);
-        logger.info("processQueueClass:{}", processQueueClass);
+        logger.info("processTaskClass:{}", processQueueClass);
         logger.info("-------------------------------------");
         LOAD_STATE = SUC_LOAD;
     }
