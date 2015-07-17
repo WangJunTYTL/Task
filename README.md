@@ -75,8 +75,8 @@
         INFO ]  {QUEUE.SERVICE:88}-dispatchParallel:2 
         INFO ]  {QUEUE.SERVICE:89}-execParallel:2 
         INFO ]  {QUEUE.SERVICE:90}-maxParallel:12 
-        INFO ]  {QUEUE.SERVICE:91}-queueList:[userLevelAnay, userBasicSync, bonusDealQueue, orderDataToEs] 
-        INFO ]  {QUEUE.SERVICE:92}-processQueueClass:cn.edaijia.crm.task.ProcessQueue 
+        INFO ]  {QUEUE.SERVICE:91}-queueList:[defaultA,defaultB] 
+        INFO ]  {QUEUE.SERVICE:92}-processQueueClass:com.peaceful.task.manage.common.ProcessQueue
         INFO ]  {QUEUE.SERVICE:93}-------------------------------------- 
 
 二、如果不想依赖web程序，只是单独的jar文件，你可以直接通过程序入口启动：
