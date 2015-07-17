@@ -2,6 +2,7 @@ package com.peaceful.demo.task.manage;
 
 import akka.actor.ActorSystem;
 import com.peaceful.task.manage.TaskManageStart;
+import com.peaceful.task.manage.msg.Task;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,7 +28,8 @@ public class Example {
 
     @RequestMapping("index")
     public String test() {
-        return "hello world";
-
+        Task task = new Task("test", "test", null);
+        return "add task success,task id is " + task.id;
     }
+
 }

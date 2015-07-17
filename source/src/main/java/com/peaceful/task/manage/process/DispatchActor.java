@@ -61,7 +61,7 @@ public class DispatchActor extends UntypedActor {
                     String taskJson = Queue.rpop(coordination.queueName);
                     Task t = null;
                     if (StringUtils.isNotEmpty(taskJson)) {
-                        log.info("task is {}", taskJson);
+                        log.debug("task is {}", taskJson);
                         t = JSON.parseObject(taskJson, Task.class);
                     }
                     if (t != null) {

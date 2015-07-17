@@ -29,6 +29,9 @@
     <!-- per4j-appender-end -->
 
 
+    <logger name="com.peaceful.task">
+        <level value="info"></level>
+    </logger>
 
 
     <root>

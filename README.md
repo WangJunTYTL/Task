@@ -8,32 +8,34 @@
 * worker【任务执行者】：实际任务执行者，负责执行router下发的任务，并在任务执行完毕后可以通知router，等待下一次任务的调度 
 * taskContainer【任务容器】：我们把这3个角色合起来称之为任务容器，它对我们开发人员是完全透明，在使用时，我们不必关系这些3个角色，只需要把你要做的事情告诉任务容器，任务容器负责整个任务中心的调度，负载，异常处理。 
 
-
+![Alt text](doc/task-manage.png)
 
 ### 使用
 
-##### 1. 加入下面依赖
+##### 1. 发布jar到你的maven私服，并加入下面依赖
+
+        mvn install 
 
         <dependency> 
-                <groupId>cn.edaijia</groupId> 
-                <artifactId>queue-service</artifactId> 
+                <groupId>com.peaceful</groupId> 
+                <artifactId>taskmanage</artifactId> 
                 <version>1.0-SNAPSHOT</version> 
         </dependency>
         
 ##### 2. 配置
 
-> 在项目的resource目录的根目录下加入配置文件：queueService.conf，配置内容如下 
+> 在项目的resource目录的根目录下加入配置文件：taskManage.conf，配置内容如下 
 
-         QueueService{ 
+         taskManage{ 
          
              # 使用版本号，目前版本只支持1.0 
              version = 1.0 
          
              # 使用服务的项目名，主要用来防止和别的项目在使用redis 队列时有同名冲突 
-             ProjectName:crmWeb 
+             projectName:crmWeb 
          
              # 需要用到的队列，实际在redis中创建的队列名是queueName_ProjectName 
-             QueueList:[userLevelAnay,userBasicSync] 
+             queueList:[default_1,default_2] 
          
              # 从redis队列中消费队列，并将task路由到下面的worker 
              router:2 
@@ -42,7 +44,7 @@
              worker:6 
          
              # 具体业务处理类 
-             ProcessQueueClass:"com.peaceful.task.example.ProcessQueue" 
+             processQueueClass:"com.peaceful.task.example.ProcessQueue" 
          
          } 
 
