@@ -15,12 +15,22 @@
 ### 使用
 
 ##### 1. 加入下面依赖
-
+        
         <dependency> 
                 <groupId>com.peaceful</groupId> 
                 <artifactId>taskmanage</artifactId> 
                 <version>1.0-SNAPSHOT</version> 
         </dependency>
+        
+        <dependency>
+                    <groupId>com.peaceful</groupId>
+                    <artifactId>redis-manage</artifactId>
+                    <version>1.0-SNAPSHOP</version>
+        </dependency>
+        
+        如果是第一次启动，请先下载依赖包，并 install到你的本地maven库中：
+        1. git@github.com:WangJunTYTL/redismanage.git
+        2. git@github.com:WangJunTYTL/peaceful-basic-platform.git
         
 ##### 2. 配置
 
@@ -153,4 +163,8 @@
 1. 队列任务：代表当前节点中用到的队列有哪些以及每个队列积压的任务数
 
 ![Alt text](doc/monitor.png)
+
+##### example
+
+使用样例可以参照 example项目
 
