@@ -17,25 +17,25 @@
 ##### 1. 加入下面依赖
 
         <dependency> 
-                <groupId>cn.edaijia</groupId> 
-                <artifactId>queue-service</artifactId> 
+                <groupId>com.peaceful</groupId> 
+                <artifactId>taskmanage</artifactId> 
                 <version>1.0-SNAPSHOT</version> 
         </dependency>
         
 ##### 2. 配置
 
-> 在项目的resource目录的根目录下加入配置文件：queueService.conf，配置内容如下 
+> 在项目的resource目录的根目录下加入配置文件：taskManage.conf，配置内容如下 
 
-         QueueService{ 
+         taskManage{ 
          
              # 使用版本号，目前版本只支持1.0 
              version = 1.0 
          
              # 使用服务的项目名，主要用来防止和别的项目在使用redis 队列时有同名冲突 
-             ProjectName:crmWeb 
+             projectName:crmWeb 
          
              # 需要用到的队列，实际在redis中创建的队列名是queueName_ProjectName 
-             QueueList:[userLevelAnay,userBasicSync] 
+             queueList:[defaultA,defaultB] 
          
              # 任务分发器的个数
              router:2 
@@ -44,10 +44,10 @@
              worker:6 
          
              # 具体业务处理类，业务的入口 
-             ProcessQueueClass:"cn.edaijia.crm.task.ProcessQueue" 
+             processQueueClass:"com.peaceful.task.manage.common.ProcessQueue" 
          
              # 监控队列积压情况，报警
-             alertPhone:"15652636152,13426031637,13810759781,18202794850"
+             alertPhone:"156526XX152,134260XX637"
          
          } 
 
@@ -109,7 +109,7 @@
 > 任务调度是该框架的另一个功能，主要是为了弥补spring的job不足的地方，利用该框架，你可以根据自己的需要通过程序随意的启动取消一个job
 
            // 新建一个job,名为test 
-           EdaijiaJob.newJob("test", new Job() {
+           TaskSchedule.newJob("test", new Job() {
     
                        @Override
                        public void logic() {
@@ -118,16 +118,16 @@
                    }
            );
            // 立马执行名为test的job一次
-           EdaijiaJob.scheduleOnce(0,TimeUnit.SECONDS,"test");
+           TaskSchedule.scheduleOnce(0,TimeUnit.SECONDS,"test");
            // 立马执行名为test的job，每隔一秒执行一次
-           EdaijiaJob.schedule(scala.concurrent.duration.Duration.Zero(),1, TimeUnit.SECONDS, "test");
+           TaskSchedule.schedule(scala.concurrent.duration.Duration.Zero(),1, TimeUnit.SECONDS, "test");
            try {
                Thread.sleep(3000);
            } catch (InterruptedException e) {
                e.printStackTrace();
            }
            //取消名为test的job
-           EdaijiaJob.cancel("test");
+           TaskSchedule.cancel("test");
 
 
 ##### 任务调度，负载，与异常处理
