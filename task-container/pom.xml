@@ -16,9 +16,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.edaijia</groupId>
-            <artifactId>common-service</artifactId>
-            <version>1.0-${project.environment}-SNAPSHOT</version>
+            <groupId>com.peaceful</groupId>
+            <artifactId>redis-manage</artifactId>
+            <version>1.0-SNAPSHOP</version>
         </dependency>
 
         <dependency>
