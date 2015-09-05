@@ -41,6 +41,19 @@
 
 <img src="./doc/design.png" width='600px' ></img>
 
+### 构建
+
+在构建之前请确保你以安装git和mvn工具
+
+	sh ./build.sh 
+
+这将会自动下载依赖的工程并把依赖包install到你的本地私服中，所以该脚本成功执行一次即可。
+
+构建成功之后，可以运行task-container-test工程，这是一个Demo工程。首先启动`SetUp类`，它会启动任务容器。然后运行`CommitTaskDemo类`,提交一个测试任务。
+
+`注意：`启动容器之前，请先启动redis服务器。默认连接的`redis`服务地址是127.0.0.1:6379，即你本地，所以本地若安装了redis请先启动，或者你也可以更改redis服务器的地址，关于redis配置的请参照工程 [redismanage](https://github.com/WangJunTYTL/redismanage.git),build.sh已经将该工程install到你本地，如果你需要更改redis配置，请下载该工程更改配置redis集群地址。
+
+	
 ### 使用
 ##### 1. 加入下面依赖
 

@@ -45,8 +45,15 @@ cd peaceful-basic-platform
 mvn clean -P${ENV} install -o  -Dmaven.test.skip=true
 cd ..
 
+[ ! -d "redismanage" ]   && git clone https://github.com/WangJunTYTL/redismanage.git
+
+cd redismanage
+mvn clean -P${ENV} install -o  -Dmaven.test.skip=true
+cd ..
+
 wait
 rm -rf peaceful-basic-platform
+rm -rf redismanage
 
 mvn -P${ENV} clean compile -o -Dmaven.test.skip=true
 
