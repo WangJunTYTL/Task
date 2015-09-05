@@ -10,7 +10,10 @@
 #
 # 如果你的开发平台是window，需要手动执行以下步骤
 #   1. git clone https://github.com/WangJunTYTL/peaceful-basic-platform.git
-#   2. 进入clone 目录 ，执行 mvn install  -Dmaven.test.skip=true
+#   2. 进入peaceful-basic-platform 目录 ，执行 mvn install  -Dmaven.test.skip=true
+#   3. git clone https://github.com/WangJunTYTL/redismanage.git
+#   4. 进入redismanage 目录 ，执行 mvn install  -Dmaven.test.skip=true
+#   5. 进入task-container 目录，执行 mvn install  -Dmaven.test.skip=true
 #==================================
 
 source /etc/profile
@@ -57,6 +60,7 @@ rm -rf redismanage
 
 mvn -P${ENV} clean compile -o -Dmaven.test.skip=true
 
+cd task-container
 mvn -P${ENV} install -o  -Dmaven.test.skip=true
 
 
