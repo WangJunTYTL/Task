@@ -5,16 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cn.edaijia</groupId>
-        <artifactId>edaijia-root-spring-pom</artifactId>
+        <groupId>com.peaceful</groupId>
+        <artifactId>peaceful-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>cn.edaijia</groupId>
+    <groupId>com.peaceful</groupId>
     <artifactId>task-container</artifactId>
     <version>2.0-SNAPSHOT</version>
 
     <dependencies>
+
         <dependency>
             <groupId>com.peaceful</groupId>
             <artifactId>redis-manage</artifactId>
@@ -23,9 +24,32 @@
 
         <dependency>
             <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-remote_2.10</artifactId>
+            <version>2.3.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-slf4j_2.10</artifactId>
             <version>2.3.8</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.perf4j</groupId>
+            <artifactId>perf4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.peaceful</groupId>
+            <artifactId>peaceful-common-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 </project>

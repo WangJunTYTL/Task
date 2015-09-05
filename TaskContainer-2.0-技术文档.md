@@ -11,7 +11,7 @@
 
 先看一个简单的用例，通过注册原生的Java对象到任务容器中，快速让你的方法实现异步并发调用：
 
-	# Java原生对象
+	// Java原生对象
 	public class Hello {
 
     	@Task(queue = "testQueue")
@@ -48,7 +48,7 @@
 ##### 1. 加入下面依赖
 
      <dependency>
-            <groupId>cn.edaijia</groupId>
+            <groupId>com.peaceful</groupId>
             <artifactId>task-container</artifactId>
             <version>2.0-SNAPSHOT</version>
      </dependency>
@@ -75,7 +75,7 @@
     	worker:28
 
 	    # 处理队列类的包名全路径 2.0 版本后已经移除该配置
-    	processTaskClass:"cn.edaijia.task.manage.demo.Process"
+    	processTaskClass:"com.peaceful.task.manage.demo.Process"
 
 	    # redis 集群服务节点 2.0 版本新增
     	redisClusterNode:"haproxy"
@@ -96,7 +96,7 @@
 		
 	2. 导出jar文件直接运行，启动之后会在后台监听任务储存中心
 	
-		程序入口cn.edaijia.task.container.Main
+		程序入口com.peaceful.task.container.Main
 		
 ##### 2. 作为job机单独运行
 
@@ -104,14 +104,14 @@
 	
 ##### 启动后输出以下log日志说明启动成功
 	
-	cn.edaijia.task.container(TaskContainerConf.java:95) ## ------------task container suc load conf---------------
-	cn.edaijia.task.container(TaskContainerConf.java:96) ## project.name:crmWeb
-	cn.edaijia.task.container(TaskContainerConf.java:97) ## router:6
-	cn.edaijia.task.container(TaskContainerConf.java:98) ## worker:28
-	cn.edaijia.task.container(TaskContainerConf.java:99) ## max.parallel:168
-	cn.edaijia.task.container(TaskContainerConf.java:100) ## task.list:[syncOrderDataToEs, defaultPushMethod, testQueue]
-	cn.edaijia.task.container(TaskContainerConf.java:101) ## process.task.class:cn.edaijia.task.manage.demo.Process
-	cn.edaijia.task.container(TaskContainerConf.java:102) ## -------------------------------------------------------
+	com.peaceful.task.container(TaskContainerConf.java:95) ## ------------task container suc load conf---------------
+	com.peaceful.task.container(TaskContainerConf.java:96) ## project.name:crmWeb
+	com.peaceful.task.container(TaskContainerConf.java:97) ## router:6
+	com.peaceful.task.container(TaskContainerConf.java:98) ## worker:28
+	com.peaceful.task.container(TaskContainerConf.java:99) ## max.parallel:168
+	com.peaceful.task.container(TaskContainerConf.java:100) ## task.list:[syncOrderDataToEs, defaultPushMethod, testQueue]
+	com.peaceful.task.container(TaskContainerConf.java:101) ## process.task.class:com.peaceful.task.manage.demo.Process
+	com.peaceful.task.container(TaskContainerConf.java:102) ## -------------------------------------------------------
 				
 
 ### log配置
@@ -131,12 +131,12 @@
     </appender>
     
     <!--开发时期建议log也设为info级别-->
-    <logger name="cn.edaijia.task.container">
+    <logger name="com.peaceful.task.container">
         <level value="info"></level>
     </logger>
 
     <!--单独把这个namespace空间的log放在一个目录，里面只会输出任务调度的log信息，其它log可以根据自己的需要存放-->
-     <logger name="cn.edaijia.task.container.process" additivity="false">
+     <logger name="com.peaceful.task.container.process" additivity="false">
         <appender-ref ref="taskContainer-file-appender"></appender-ref>
     </logger>
     
