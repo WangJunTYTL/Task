@@ -20,7 +20,7 @@ public class TaskQueue {
     private static JedisPool jedisPool = JedisPoolServiceImpl.getJedisPoolService().getJedisPoolByHostName("haproxy");
     private static StopWatch stopWatch = new Log4JStopWatch();
 
-    public static String rpop(String key) {
+    public static String pop(String key) {
         stopWatch.stop();
         if (isLock(key)) {
             TaskContainerLogger.LOGGER.warn("please note , key is {}, is locked", key);
@@ -39,7 +39,7 @@ public class TaskQueue {
         return res;
     }
 
-    public static Long lpush(String key, String value) {
+    public static Long push(String key, String value) {
         stopWatch.stop();
         key += ("_" + TaskContainerConf.getConf().projectName);
         Jedis jedis = jedisPool.getResource();

@@ -47,7 +47,7 @@ public class TaskContainer {
                         try {
                             List<String> queues = TaskContainerConf.getConf().queues;
                             for (String q : queues) {
-                                String taskJson = TaskQueue.rpop(q);
+                                String taskJson = TaskQueue.pop(q);
                                 Object task = null;
                                 if (StringUtils.isNotEmpty(taskJson)) {
                                     task = TaskProtocol.parse(taskJson);

@@ -65,7 +65,7 @@ public class Task implements Serializable {
         this.method = method;
         this.params = params;
         try {
-            TaskQueue.lpush(queueName, JSON.toJSONString(this));
+            TaskQueue.push(queueName, JSON.toJSONString(this));
             MonitorQueueImpl.commitCount.incrementAndGet();
         } catch (Exception e) {
             throw new AddTaskQueueException(toString(), e);

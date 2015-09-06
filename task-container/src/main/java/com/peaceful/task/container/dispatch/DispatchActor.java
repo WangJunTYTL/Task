@@ -65,7 +65,7 @@ public class DispatchActor extends UntypedActor {
             } else {
                 Coordination coordination = (Coordination) msg;
                 try {
-                    String taskJson = TaskQueue.rpop(coordination.queueName);
+                    String taskJson = TaskQueue.pop(coordination.queueName);
                     Object t = null;
                     if (StringUtils.isNotEmpty(taskJson)) {
                         log.debug("task is {}", taskJson);

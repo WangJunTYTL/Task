@@ -75,7 +75,7 @@ public abstract class TaskSchedule {
                     //解决FastJson循环引用的问题
                     SerializerFeature feature = SerializerFeature.DisableCircularReferenceDetect;
                     Util.report(JSON.toJSONString(task2, feature));
-                    TaskQueue.lpush(task2.queueName, JSON.toJSONString(task2, feature));
+                    TaskQueue.push(task2.queueName, JSON.toJSONString(task2, feature));
                 } else {
                     return method.invoke(this, args);
                 }
