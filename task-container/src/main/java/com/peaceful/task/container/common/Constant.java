@@ -8,5 +8,5 @@ package com.peaceful.task.container.common;
 
 public class Constant {
 
-    public final static String DEFAULT_LOG_NAMESPACE="cn.edaijia.task.container";
+    public final static String DEFAULT_LOG_NAMESPACE="com.peaceful.task.container";
 }

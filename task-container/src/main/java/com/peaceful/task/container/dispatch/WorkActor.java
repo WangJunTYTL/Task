@@ -14,6 +14,10 @@ import net.sf.cglib.reflect.FastMethod;
 import java.util.Map;
 
 /**
+ * Worker
+ * 实际任务执行者,负责执行 调度路由中⼼心 下发的任务,并在任务执行完毕后向调度路由中 心汇报执行情况。
+ * 调度中心根据 worker 反馈的执行情况,进行任务调度。
+ * <p/>
  * Created by wangjun on 15/3/11.
  */
 public class WorkActor extends UntypedActor {

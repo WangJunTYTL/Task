@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <groupId>cn.edaijia</groupId>
+    <groupId>com.peaceful</groupId>
     <artifactId>task-manage</artifactId>
     <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>

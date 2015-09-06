@@ -34,7 +34,7 @@
         </layout>
     </appender>
 
-    <logger name="cn.edaijia.queue">
+    <logger name="com.peaceful.queue">
         <!--<appender-ref ref="AKKA_STDOUT"></appender-ref>-->
         <appender-ref ref="AKKA_FILE2"></appender-ref>
     </logger>

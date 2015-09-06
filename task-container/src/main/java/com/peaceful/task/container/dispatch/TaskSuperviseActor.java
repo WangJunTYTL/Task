@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 任务存储与调度监管
+ * 设计该角色的目的主要是为了监管 任务存储中⼼心 和 调度路由中⼼心 的情况,它 在两者之间起到一个纽带的作用,
+ * 如果任务存储中心发生大量积压, 监管者 可以发出报警,
+ * 同时他也 可以监控 调度路由中⼼心 的压力,考虑是否自动增加 路由中⼼心 的处理能力
  * Created by wangjun on 15/3/11.
  */
 public class TaskSuperviseActor extends UntypedActor {

@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cn.edaijia</groupId>
-        <artifactId>edaijia-root-spring-pom</artifactId>
+        <groupId>com.peaceful</groupId>
+        <artifactId>peaceful-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>cn.edaijia</groupId>
+    <groupId>com.peaceful</groupId>
     <artifactId>task-container-test</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>

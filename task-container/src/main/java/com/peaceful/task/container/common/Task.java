@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * queue 任务存放队列
+ * 配置任务单元
+ * queue 任务存放队列 默认commonQueue
  *
  * @author WangJun <wangjuntytl@163.com>
  * @version 1.0 15/8/16

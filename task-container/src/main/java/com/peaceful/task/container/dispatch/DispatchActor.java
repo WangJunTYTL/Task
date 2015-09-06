@@ -23,12 +23,19 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 任务调度路由中心
+ * <p/>
+ * 路由中心分发任务方式有两种：
+ * 第一，由系统的任务存储和调度监管委派，路由在把该任务分发给某个适合的actor，这种分发称之为强制分发
+ * 第二，由路由中心和worker之间的内部协调分发，这种分发称之为Coordination分发
+ * <p/>
  * Created by wangjun on 15/3/11.
  */
 public class DispatchActor extends UntypedActor {
 
     final DiagnosticLoggingAdapter log = Logging.getLogger(this);
     Router router;
+    // 此处暂时这样处理，主要为了限制actor的执行和观察actor的执行情况
     private AtomicInteger pressure = new AtomicInteger(0);
 
     {

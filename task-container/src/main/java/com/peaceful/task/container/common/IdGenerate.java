@@ -1,7 +1,6 @@
 package com.peaceful.task.container.common;
 
 /**
- *
  * 唯一id生成器
  *
  * @author WangJun <wangjuntytl@163.com>
@@ -12,7 +11,12 @@ package com.peaceful.task.container.common;
 public class IdGenerate {
 
 
-    public static String getNext(){
-        return String.valueOf(System.nanoTime()/1000);
+    /**
+     * 通过nanoTime作为唯一ID
+     *
+     * @return
+     */
+    public static String getNext() {
+        return String.valueOf(System.nanoTime() / 1000);
     }
 }

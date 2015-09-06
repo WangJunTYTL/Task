@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 任务获取与调度中心
+ *
  * @author WangJun <wangjuntytl@163.com>
  * @version 1.0 15/8/16
  * @since 1.6
@@ -38,6 +40,14 @@ public abstract class TaskSchedule {
     private static Map<Class, Object> scheduleProcessMap = new IdentityHashMap<Class, Object>();
     private static Logger logger = LoggerFactory.getLogger(TaskSchedule.class);
 
+    /**
+     * 利用动态代理打断Java的原生方法的执行，获取运行时的调用信息，并序列化为json数据提交到任务存储中心
+     * 此处动态代理技术有CGLIB提供，你不必编写代理对象的接口
+     *
+     * @param tClass
+     * @param <T>
+     * @return
+     */
     public static <T> T registerASyncClass(final Class<T> tClass) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(tClass);
@@ -77,6 +87,16 @@ public abstract class TaskSchedule {
         return t;
     }
 
+    /**
+     * 根据一个安全正确的Task2任务单元，去执行正确的方法
+     *
+     * @param task2
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     */
     public static void invoke(Task2 task2) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
         InvokeContext invokeContext = new InvokeContext(task2);
         try {
@@ -88,10 +108,26 @@ public abstract class TaskSchedule {
         }
     }
 
+    /**
+     * 任务调度：在指定时刻调度一次
+     *
+     * @param delay
+     * @param timeUnit
+     * @param runnable
+     */
     public static void scheduleOnce(long delay, TimeUnit timeUnit, Runnable runnable) {
         TaskContainer.getSystem().scheduler().scheduleOnce(Duration.create(delay, timeUnit), runnable, TaskContainer.getSystem().dispatcher());
     }
 
+    /**
+     * 可以取消的任务调度：在指定时刻按固定周期调度
+     *
+     * @param startTime
+     * @param delay
+     * @param timeUnit
+     * @param runnable
+     * @return
+     */
     public static Cancellable schedule(FiniteDuration startTime, long delay, TimeUnit timeUnit, Runnable runnable) {
         return TaskContainer.getSystem().scheduler().schedule(startTime, Duration.create(delay, timeUnit), runnable, TaskContainer.getSystem().dispatcher());
     }

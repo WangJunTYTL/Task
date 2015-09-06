@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import java.util.List;
 
 /**
- * 任务容器配置信息加载
+ * 任务容器全局配置信息
  *
  * @author WangJun <wangjuntytl@163.com>
  * @version 2.0 15/5/15
@@ -105,8 +105,9 @@ public class TaskContainerConf {
 
     /**
      * 获取配置信息
-     * @throws TaskContainerConfigException
+     *
      * @return TaskContainerConf
+     * @throws TaskContainerConfigException
      */
     public static TaskContainerConf getConf() {
         TaskContainerConf conf = getInstance.queueTaskConf;

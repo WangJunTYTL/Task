@@ -10,6 +10,8 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
+ * 调度任务时用到对象管理容器
+ *
  * @author WangJun <wangjuntytl@163.com>
  * @version 1.0 15/8/16
  * @since 1.6
@@ -17,8 +19,11 @@ import java.util.Map;
 
 public class DispatchContainer extends HashMap {
 
+    //Java原生对象实例
     static Map<Class, Object> DISPATCH_INSTANCE_CONTAINER = new IdentityHashMap();
+    //Java对应的代理对象FastClass
     static Map<Class, FastClass> DISPATCH_FASTCLASS_CONTAINER = new IdentityHashMap();
+    //执行任务单元调用的指令
     final static HandlerChain HANDLER_CHAIN = new HandlerChain();
 
     static {
