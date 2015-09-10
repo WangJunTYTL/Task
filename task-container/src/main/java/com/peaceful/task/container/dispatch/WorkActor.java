@@ -51,13 +51,11 @@ public class WorkActor extends UntypedActor {
             } catch (Exception e) {
                 log.error(e, "exe task error id is " + task.getId() + " cause is  " + e.getCause() + " error is \n" + e);
             }
-            log.info("complete task " + task.getId());
             getSender().tell(new Coordination(task.id, task.getQueueName()), getSelf()); // tell sender , it see message
         } else if (o instanceof Task2) {
             Task2 task2 = (Task2) o;
             log.info("start " + task2.toString());
             TaskSchedule.invoke(task2);
-            log.info("complete task " + task2.getId());
             getSender().tell(new Coordination(task2.id, task2.getQueueName()), getSelf()); // tell sender , it see message
         } else {
             unhandled(o);

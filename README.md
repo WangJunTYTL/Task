@@ -206,6 +206,49 @@
 
 <img src="./doc/design2.png" width='300px' ></img>
 
+### 中断任务的执行
+
+有时，我们突然发现，我们线上正在处理的任务，存在一些问题，比如我在大批量给客户绑定优惠券，这时我突然意识到，优惠券的金额我配置错了，所以我希望及时中断任务的执行，那你可以吐过下面的方式控制,
+以redis队列为列，你只需要设置一个key为随意一个值，比如，你执行该任务的队列时sendBonus
+	
+	set sendBonus+"_"+projectName+"_"+lock 1  中断任务执行
+	del sendBonus+"_"+projectName+"_"+lock 1  继续任务执行
+	del sendBonus+"_"+projectName   清除任务
+
+
+### 强制更改任务名称
+
+强制更改任务的名称是为了是任务可以进入到不同的队列，让开发人员可以把一批方法的执行放入到同一个队列，可以在代码中灵活的管理任务，比如我有一个大批量发送短信的需求，A需求发送300W，B需求需要发送500W
+，而我希望这两个需求发送短信时在不同的队列中，方便我可以同时观察这两个需求的处理情况，则你可以强制在发送A短信前把任务名称更改，覆盖注解配置的内容，比如下方
+	
+	public class Hello {
+	
+	    @Task("testQueue")
+	    public void test(String str) {
+	        Util.report(str);
+	    }
+	
+	    @Task("testQueue2")
+	    public void test2(String str){
+	        Util.report(str);
+	
+	    }
+	}
+	
+	public static Hello hello = TaskSchedule.registerASyncClass(Hello.class);
+
+	public static void forceChangeTaskName() {
+    
+            // 强制更改任务名称，使其可以进入到aa123的队列
+            TaskSchedule.Schedule.forceChangeTaskName.set("aa123");
+            hello.test("hello world");
+            // 打断强制过程，使test2方法的调入继续进入到testQueue2队列
+            TaskSchedule.Schedule.forceChangeTaskName.remove();
+            hello.test2("123");
+    
+        }
+
+
 	
 ### 手动定时job
 

@@ -6,7 +6,9 @@ import com.typesafe.config.ConfigFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 任务容器全局配置信息
@@ -33,6 +35,8 @@ public class TaskContainerConf {
     public String alertPhone = "";
     // 任务对列列表
     public List<String> queues;
+    // 临时任务队列列表
+    public Set<String> tmpQueues = new HashSet<String>();
     // 为载入配置文件
     private static final int NOT_LOAD = 0;
     // 成功载入配置文件
@@ -118,7 +122,6 @@ public class TaskContainerConf {
     }
 
     private static class getInstance {
-
         public static TaskContainerConf queueTaskConf = new TaskContainerConf();
     }
 

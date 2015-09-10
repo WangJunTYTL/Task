@@ -3,16 +3,19 @@ package com.peaceful.task.container;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import com.peaceful.task.container.common.Constant;
 import com.peaceful.task.container.common.TaskContainerLogger;
 import com.peaceful.task.container.common.TaskContainerConf;
 import com.peaceful.task.container.dispatch.TaskProtocol;
 import com.peaceful.task.container.dispatch.TaskSuperviseActor;
 import com.peaceful.task.container.repo.TaskQueue;
+import com.peaceful.task.container.schedule.TaskSchedule;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import scala.concurrent.duration.Duration;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -60,6 +63,36 @@ public class TaskContainer {
                         }
                     }
                 }, system.dispatcher());
+
+        TaskSchedule.schedule(Duration.Zero(), 6, TimeUnit.SECONDS, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Set<String> queues = TaskContainerConf.getConf().tmpQueues;
+                    String qu = TaskQueue.getPersistenceForceTask(Constant.FORCE_TASK_PERSISTENCE_QUEUE);
+                    if (StringUtils.isNotBlank(qu)){
+                        queues.add(qu);
+                    }
+                    for (String q : queues) {
+                        String key = Constant.FORCE_TASK_NAME_PREFIX + q;
+                        if (TaskQueue.llen(key) == 0) {
+                            queues.remove(q);
+                        } else {
+                            String taskJson = TaskQueue.pop(key);
+                            Object task = null;
+                            if (StringUtils.isNotEmpty(taskJson)) {
+                                task = TaskProtocol.parse(taskJson);
+                            }
+                            if (task != null)
+                                supervise.tell(task, ActorRef.noSender());
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("task container error {}", e);
+
+                }
+            }
+        });
 
     }
 

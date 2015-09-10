@@ -11,18 +11,33 @@ import com.peaceful.task.container.schedule.TaskSchedule;
 
 public class CommitTaskDemo {
 
+    public static Hello hello = TaskSchedule.registerASyncClass(Hello.class);
 
 
     public static void main(String[] args) {
-       Hello hello = TaskSchedule.registerASyncClass(Hello.class);
+        for (int i = 0; i < 1000; i++)
+            forceChangeTaskName();
+    }
+
+
+    public static void simple() {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++)
             hello.test("hello world");
-
         // Object 方法直接执行
         Util.report(hello.hashCode());
         Util.report(hello.toString());
         Util.report(System.currentTimeMillis() - start);
+    }
+
+    public static void forceChangeTaskName() {
+
+        // 强制更改任务名称，使其可以进入到aa123队列
+        TaskSchedule.Schedule.forceChangeTaskName.set("aa123");
+        hello.test("hello world");
+        TaskSchedule.Schedule.forceChangeTaskName.remove();
+        hello.test2("123");
+
     }
 
 }

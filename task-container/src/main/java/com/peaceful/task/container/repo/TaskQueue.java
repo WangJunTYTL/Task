@@ -1,13 +1,15 @@
 package com.peaceful.task.container.repo;
 
 import com.peaceful.common.redis.proxy.JedisPoolServiceImpl;
-import com.peaceful.task.container.common.TaskContainerLogger;
 import com.peaceful.task.container.common.TaskContainerConf;
+import com.peaceful.task.container.common.TaskContainerLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.Set;
 
 /**
  * @author WangJun <wangjuntytl@163.com>
@@ -53,6 +55,50 @@ public class TaskQueue {
         }
         return res;
 
+    }
+
+    public static Long persistenceForceTask(String key, String value) {
+        stopWatch.stop();
+        key += ("_" + TaskContainerConf.getConf().projectName);
+        Jedis jedis = jedisPool.getResource();
+        Long res = null;
+        try {
+            res = jedis.sadd(key, value);
+            stopWatch.lap("queue_push");
+            jedisPool.returnResource(jedis);
+        } catch (Exception e) {
+            jedisPool.returnBrokenResource(jedis);
+        }
+        return res;
+    }
+
+    public static String getPersistenceForceTask(String key) {
+        stopWatch.stop();
+        key += ("_" + TaskContainerConf.getConf().projectName);
+        Jedis jedis = jedisPool.getResource();
+        String res = null;
+        try {
+            res = jedis.spop(key);
+            stopWatch.lap("queue_push");
+            jedisPool.returnResource(jedis);
+        } catch (Exception e) {
+            jedisPool.returnBrokenResource(jedis);
+        }
+        return res;
+    }
+
+
+
+
+    public static void expire(String key,int seconds){
+        key += ("_" + TaskContainerConf.getConf().projectName);
+        Jedis jedis = jedisPool.getResource();
+        try {
+            jedis.expire(key, seconds);
+            jedisPool.returnResource(jedis);
+        } catch (Exception e) {
+            jedisPool.returnBrokenResource(jedis);
+        }
     }
 
     public static Long llen(String key) {
@@ -116,11 +162,12 @@ public class TaskQueue {
         String res = null;
         try {
             res = jedis.getSet(lockName, "1");
-            jedis.expire(lockName,66);
+            jedis.expire(lockName, 66);
             jedisPool.returnResource(jedis);
         } catch (Exception e) {
             jedisPool.returnBrokenResource(jedis);
         }
         return StringUtils.isEmpty(res);
     }
+
 }

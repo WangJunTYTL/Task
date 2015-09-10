@@ -5,6 +5,7 @@ import com.peaceful.task.container.repo.TaskQueue;
 import com.peaceful.task.container.monitor.MonitorQueue;
 import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -22,7 +23,10 @@ public class MonitorQueueImpl implements MonitorQueue {
     TaskContainerConf queueTaskConf = TaskContainerConf.getConf();
 
     public List<String> getAllQueue() {
-        return queueTaskConf.queues;
+        List<String> queues = new ArrayList<String>();
+        queues.addAll(queueTaskConf.queues);
+        queues.addAll(queueTaskConf.tmpQueues);
+        return queues;
     }
 
 
@@ -45,6 +49,7 @@ public class MonitorQueueImpl implements MonitorQueue {
             else
                 result.put(q, TaskQueue.llen(q));
         }
+
         return result;
     }
 

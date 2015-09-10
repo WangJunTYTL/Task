@@ -1,7 +1,10 @@
 package com.peaceful.task.container.schedule;
 
 import akka.actor.Cancellable;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.peaceful.task.container.TaskContainer;
+import com.peaceful.task.container.common.Constant;
 import com.peaceful.task.container.common.IdGenerate;
 import com.peaceful.task.container.common.Task;
 import com.peaceful.task.container.common.TaskContainerConf;
@@ -11,9 +14,6 @@ import com.peaceful.task.container.invoke.InvokeContext;
 import com.peaceful.task.container.invoke.trace.InvokeTrace;
 import com.peaceful.task.container.msg.Task2;
 import com.peaceful.task.container.repo.TaskQueue;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.peaceful.common.util.Util;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 import org.slf4j.Logger;
@@ -62,19 +62,26 @@ public abstract class TaskSchedule {
                     task2.setParameterTypes(method.getParameterTypes());
                     task2.setArgs(args);
                     Task task = method.getAnnotation(Task.class);
-                    if (task == null)
+                    String forceName = Schedule.forceChangeTaskName.get();
+                    if (forceName != null) {
+                        if (task != null) {
+                            logger.debug("force change task name {} -> {}", task.value(), forceName);
+                        }
+                        TaskContainerConf.getConf().tmpQueues.add(forceName);
+                        TaskQueue.persistenceForceTask(Constant.FORCE_TASK_PERSISTENCE_QUEUE, forceName);
+                        task2.setQueueName(Constant.FORCE_TASK_NAME_PREFIX + forceName);
+                    } else if (task == null)
                         task2.setQueueName("commonQueue");
                     else {
-                        if (TaskContainerConf.getConf().queues.contains(task.queue())) {
-                            task2.id = IdGenerate.getNext();
+                        if (TaskContainerConf.getConf().queues.contains(task.value())) {
                         } else {
-                            throw new NotFindQueueException(task.queue());
+                            throw new NotFindQueueException(task.value());
                         }
-                        task2.setQueueName(task.queue());
+                        task2.setQueueName(task.value());
                     }
+                    task2.id = IdGenerate.getNext();
                     //解决FastJson循环引用的问题
                     SerializerFeature feature = SerializerFeature.DisableCircularReferenceDetect;
-                    Util.report(JSON.toJSONString(task2, feature));
                     TaskQueue.push(task2.queueName, JSON.toJSONString(task2, feature));
                 } else {
                     return method.invoke(this, args);
@@ -130,6 +137,14 @@ public abstract class TaskSchedule {
      */
     public static Cancellable schedule(FiniteDuration startTime, long delay, TimeUnit timeUnit, Runnable runnable) {
         return TaskContainer.getSystem().scheduler().schedule(startTime, Duration.create(delay, timeUnit), runnable, TaskContainer.getSystem().dispatcher());
+    }
+
+
+    public static class Schedule {
+        // 强制更改任务名称，使其可以进入到别的队列
+        public static ThreadLocal<String> forceChangeTaskName = new ThreadLocal<String>();
+
+
     }
 
 

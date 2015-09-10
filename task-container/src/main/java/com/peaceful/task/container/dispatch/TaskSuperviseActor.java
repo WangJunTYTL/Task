@@ -52,6 +52,7 @@ public class TaskSuperviseActor extends UntypedActor {
                 if (TaskQueue.getTmpLock("task_manage_alert_sms")) {
 //                    UsefulUtils.alertSms(TaskContainerConf.getConf().alertPhone, "【" + TaskContainerConf.getConf().projectName + "】队列任务出现积压，目前积压任务数：" + sum);
                     // todo
+
                 }
                 router.route(new OpenValve(), getSender());
             }
