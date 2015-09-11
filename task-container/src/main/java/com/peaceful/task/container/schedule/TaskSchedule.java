@@ -67,13 +67,13 @@ public abstract class TaskSchedule {
                         if (task != null) {
                             logger.debug("force change task name {} -> {}", task.value(), forceName);
                         }
-                        TaskContainerConf.getConf().tmpQueues.add(forceName);
+                        TaskContainerConf.getConf().flexibleTasks.add(forceName);
                         TaskQueue.persistenceForceTask(Constant.FORCE_TASK_PERSISTENCE_QUEUE, forceName);
                         task2.setQueueName(Constant.FORCE_TASK_NAME_PREFIX + forceName);
                     } else if (task == null)
                         task2.setQueueName("commonQueue");
                     else {
-                        if (TaskContainerConf.getConf().queues.contains(task.value())) {
+                        if (TaskContainerConf.getConf().focusedTasks.contains(task.value())) {
                         } else {
                             throw new NotFindQueueException(task.value());
                         }

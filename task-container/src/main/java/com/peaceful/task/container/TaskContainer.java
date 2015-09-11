@@ -48,7 +48,7 @@ public class TaskContainer {
                     public void run() {
                         LOGGER.debug("task container monitor start ...");
                         try {
-                            List<String> queues = TaskContainerConf.getConf().queues;
+                            List<String> queues = TaskContainerConf.getConf().focusedTasks;
                             for (String q : queues) {
                                 String taskJson = TaskQueue.pop(q);
                                 Object task = null;
@@ -68,7 +68,7 @@ public class TaskContainer {
             @Override
             public void run() {
                 try {
-                    Set<String> queues = TaskContainerConf.getConf().tmpQueues;
+                    Set<String> queues = TaskContainerConf.getConf().flexibleTasks;
                     String qu = TaskQueue.getPersistenceForceTask(Constant.FORCE_TASK_PERSISTENCE_QUEUE);
                     if (StringUtils.isNotBlank(qu)){
                         queues.add(qu);

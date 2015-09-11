@@ -56,7 +56,7 @@ public class Task implements Serializable {
     }
 
     public Task(String queueName, String method, Map<String, Object> params) {
-        if (TaskContainerConf.getConf().queues.contains(queueName)) {
+        if (TaskContainerConf.getConf().focusedTasks.contains(queueName)) {
             this.id = IdGenerate.getNext();
         } else {
             throw new NotFindQueueException(queueName);

@@ -20,7 +20,17 @@ import java.util.Set;
 
 public class TaskContainerConf {
 
-    //项目名称
+    /**
+     * 定义你的项目名称
+     * 如果你有多个项目嵌入了该组件，而且多个项目共用了一套队列系统，为了隔离系统之间的队列，当创建队列时会自动添加醒目名称在你队列的后面
+     * 比如 projectName = 'crmWeb'
+     *
+     * @Task("testQueue") public void test(String str) {
+     * Util.report(str);
+     * }
+     * <p/>
+     * 实际调用该方法会进入到testQueue_crmWeb 队列
+     */
     public String projectName = "default";
     // router count
     public int router = 2;
@@ -33,10 +43,10 @@ public class TaskContainerConf {
     public String processTaskClass = "";
     // 任务积压超过指定数量后，发出报警，报警手机号列表
     public String alertPhone = "";
-    // 任务对列列表
-    public List<String> queues;
-    // 临时任务队列列表
-    public Set<String> tmpQueues = new HashSet<String>();
+    // 固定的任务对列列表
+    public List<String> focusedTasks;
+    // 运行过程中动态添加的任务队列列表
+    public Set<String> flexibleTasks = new HashSet<String>();
     // 为载入配置文件
     private static final int NOT_LOAD = 0;
     // 成功载入配置文件
@@ -95,13 +105,13 @@ public class TaskContainerConf {
             throw new TaskContainerConfigException(e);
         }
         maxParallel = router * worker;
-        queues = config.getStringList("taskContainer.taskList");
+        focusedTasks = config.getStringList("taskContainer.taskList");
         logger.info("------------task container suc load conf---------------");
         logger.info("project.name:{}", projectName);
         logger.info("router:{}", router);
         logger.info("worker:{}", worker);
         logger.info("max.parallel:{}", maxParallel);
-        logger.info("task.list:{}", queues);
+        logger.info("task.list:{}", focusedTasks);
         logger.info("process.task.class:{}", processTaskClass);
         logger.info("-------------------------------------------------------");
         LOAD_STATE = SUC_LOAD;

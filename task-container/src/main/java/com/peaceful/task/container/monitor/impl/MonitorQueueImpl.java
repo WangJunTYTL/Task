@@ -24,8 +24,8 @@ public class MonitorQueueImpl implements MonitorQueue {
 
     public List<String> getAllQueue() {
         List<String> queues = new ArrayList<String>();
-        queues.addAll(queueTaskConf.queues);
-        queues.addAll(queueTaskConf.tmpQueues);
+        queues.addAll(queueTaskConf.focusedTasks);
+        queues.addAll(queueTaskConf.flexibleTasks);
         return queues;
     }
 
