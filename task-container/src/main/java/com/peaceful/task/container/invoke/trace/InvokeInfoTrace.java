@@ -22,8 +22,9 @@ public class InvokeInfoTrace implements Trace {
         InvokeContext invokeContext = (InvokeContext) context;
         if (invokeContext.get(InvokeContext.START_TIME) != null) {
             long start = Long.valueOf((String) invokeContext.get(InvokeContext.START_TIME));
-            logger.info("complete task {} {} cost time {}",
+            logger.info("complete task {}-{} {} cost time {}",
                     invokeContext.get(InvokeContext.TASK_ID),
+                    invokeContext.get(InvokeContext.QUEUE_NAME),
                     invokeContext.aClass + "." + invokeContext.methodName ,
                     System.currentTimeMillis() - start);
         }

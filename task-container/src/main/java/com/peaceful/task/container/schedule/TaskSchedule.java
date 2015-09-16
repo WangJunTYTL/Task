@@ -13,7 +13,8 @@ import com.peaceful.task.container.exception.NotFindQueueException;
 import com.peaceful.task.container.invoke.InvokeContext;
 import com.peaceful.task.container.invoke.trace.InvokeTrace;
 import com.peaceful.task.container.msg.Task2;
-import com.peaceful.task.container.repo.TaskQueue;
+import com.peaceful.task.container.store.FlexibleRegist;
+import com.peaceful.task.container.store.TaskStore;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 import org.slf4j.Logger;
@@ -65,11 +66,13 @@ public abstract class TaskSchedule {
                     String forceName = Schedule.forceChangeTaskName.get();
                     if (forceName != null) {
                         if (task != null) {
-                            logger.debug("force change task name {} -> {}", task.value(), forceName);
+                            logger.debug("flexible task id {} -> {}", task.value(), forceName);
                         }
+                        // 保存动态任务到配置类中
                         TaskContainerConf.getConf().flexibleTasks.add(forceName);
-                        TaskQueue.persistenceForceTask(Constant.FORCE_TASK_PERSISTENCE_QUEUE, forceName);
-                        task2.setQueueName(Constant.FORCE_TASK_NAME_PREFIX + forceName);
+                        // 保存提交信息到任务中心，用于集群中的各个节点可以观察到
+                        FlexibleRegist.registFlexibleTaskToTaskCenter(Constant.FORCE_TASK_PERSISTENCE_QUEUE, forceName);
+                        task2.setQueueName(Constant.RUNNING_TIME_TASK_PREFIX + forceName);
                     } else if (task == null)
                         task2.setQueueName("commonQueue");
                     else {
@@ -82,7 +85,7 @@ public abstract class TaskSchedule {
                     task2.id = IdGenerate.getNext();
                     //解决FastJson循环引用的问题
                     SerializerFeature feature = SerializerFeature.DisableCircularReferenceDetect;
-                    TaskQueue.push(task2.queueName, JSON.toJSONString(task2, feature));
+                    TaskStore.get().push(task2.queueName, JSON.toJSONString(task2, feature));
                 } else {
                     return method.invoke(this, args);
                 }
@@ -111,7 +114,7 @@ public abstract class TaskSchedule {
             DispatchContainer.getHandlerChain().execute(invokeContext);
             InvokeTrace.end.execute(invokeContext);
         } catch (Exception e) {
-            logger.error("task2 invoke error {}", e);
+            logger.error("task2 invoke error {}", e.getCause());
         }
     }
 

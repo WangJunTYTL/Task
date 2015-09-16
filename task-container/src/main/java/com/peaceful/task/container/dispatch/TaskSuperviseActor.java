@@ -7,12 +7,8 @@ import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
 import com.peaceful.task.container.common.TaskContainerConf;
-import com.peaceful.task.container.msg.OpenValve;
 import com.peaceful.task.container.msg.Task;
 import com.peaceful.task.container.msg.Task2;
-import com.peaceful.task.container.repo.TaskQueue;
-import com.peaceful.task.container.monitor.MonitorQueue;
-import com.peaceful.task.container.monitor.impl.MonitorQueueImpl;
 import scala.concurrent.duration.Duration;
 
 import java.util.ArrayList;
@@ -28,7 +24,6 @@ import java.util.List;
 public class TaskSuperviseActor extends UntypedActor {
 
     Router router;
-    MonitorQueue montiorQueue;
 
 
     {
@@ -39,7 +34,6 @@ public class TaskSuperviseActor extends UntypedActor {
             routees.add(new ActorRefRoutee(r));
         }
         router = new Router(new RoundRobinRoutingLogic(), routees);
-        montiorQueue = new MonitorQueueImpl();
     }
 
 
@@ -47,15 +41,8 @@ public class TaskSuperviseActor extends UntypedActor {
     public void onReceive(Object msg) throws Exception {
         if (msg instanceof Task || msg instanceof Task2) {
             router.route(msg, getSender());
-            long sum = montiorQueue.getSumOfQueueSize();
-            if (sum > 5666) {
-                if (TaskQueue.getTmpLock("task_manage_alert_sms")) {
-//                    UsefulUtils.alertSms(TaskContainerConf.getConf().alertPhone, "【" + TaskContainerConf.getConf().projectName + "】队列任务出现积压，目前积压任务数：" + sum);
-                    // todo
 
-                }
-                router.route(new OpenValve(), getSender());
-            }
+
         } else if (msg instanceof Terminated) {
             router = router.removeRoutee(((Terminated) msg).actor());
             ActorRef r = getContext().actorOf(Props.create(DispatchActor.class));

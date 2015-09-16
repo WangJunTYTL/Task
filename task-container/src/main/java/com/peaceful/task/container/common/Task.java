@@ -17,5 +17,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Task {
+
+    // 任务名称 ，系统会更具名称创建任务队列
     String value() default "commonQueue";
+
+    // 任务简单的描述，主要用于监控显示
+    String desc() default  "";
 }

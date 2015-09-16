@@ -1,12 +1,11 @@
 package com.peaceful.task.container.msg;
 
+import com.alibaba.fastjson.JSON;
 import com.peaceful.task.container.common.IdGenerate;
 import com.peaceful.task.container.common.TaskContainerConf;
 import com.peaceful.task.container.exception.AddTaskQueueException;
 import com.peaceful.task.container.exception.NotFindQueueException;
-import com.peaceful.task.container.repo.TaskQueue;
-import com.peaceful.task.container.monitor.impl.MonitorQueueImpl;
-import com.alibaba.fastjson.JSON;
+import com.peaceful.task.container.store.TaskStore;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -65,8 +64,7 @@ public class Task implements Serializable {
         this.method = method;
         this.params = params;
         try {
-            TaskQueue.push(queueName, JSON.toJSONString(this));
-            MonitorQueueImpl.commitCount.incrementAndGet();
+            TaskStore.get().push(queueName, JSON.toJSONString(this));
         } catch (Exception e) {
             throw new AddTaskQueueException(toString(), e);
         }

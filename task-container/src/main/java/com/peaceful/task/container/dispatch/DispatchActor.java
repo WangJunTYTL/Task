@@ -8,13 +8,12 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
-import com.peaceful.task.container.msg.Coordination;
 import com.peaceful.task.container.common.TaskContainerConf;
+import com.peaceful.task.container.msg.Coordination;
 import com.peaceful.task.container.msg.OpenValve;
 import com.peaceful.task.container.msg.Task;
 import com.peaceful.task.container.msg.Task2;
-import com.peaceful.task.container.repo.TaskQueue;
-import com.peaceful.task.container.monitor.impl.MonitorQueueImpl;
+import com.peaceful.task.container.store.TaskStore;
 import org.apache.commons.lang3.StringUtils;
 import scala.concurrent.duration.Duration;
 
@@ -51,7 +50,7 @@ public class DispatchActor extends UntypedActor {
     @Override
     public void onReceive(Object msg) throws Exception {
         if (pressure.get() < 0) pressure.set(0);
-        MonitorQueueImpl.pressure = pressure.get();
+        RouterCoordinate.pressure = pressure.get();
         if (msg instanceof Task || msg instanceof Task2) {
             log.debug("open dispatch task ");
             pressure.incrementAndGet();
@@ -59,13 +58,13 @@ public class DispatchActor extends UntypedActor {
         } else if (msg instanceof Coordination) {
             log.debug(getSender().path().toSerializationFormat() + " receive worker  msg");
             pressure.decrementAndGet();
-            MonitorQueueImpl.pressure = pressure.get();
+            RouterCoordinate.pressure = pressure.get();
             if (pressure.get() >= TaskContainerConf.getConf().worker) {
                 //pass
             } else {
                 Coordination coordination = (Coordination) msg;
                 try {
-                    String taskJson = TaskQueue.pop(coordination.queueName);
+                    String taskJson = TaskStore.get().pop(coordination.queueName);
                     Object t = null;
                     if (StringUtils.isNotEmpty(taskJson)) {
                         log.debug("task is {}", taskJson);
