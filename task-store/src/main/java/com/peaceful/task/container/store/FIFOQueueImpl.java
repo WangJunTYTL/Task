@@ -1,6 +1,7 @@
 package com.peaceful.task.container.store;
 
 import com.peaceful.common.redis.proxy.JedisPoolServiceImpl;
+import com.peaceful.task.container.store.help.Helper;
 import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
@@ -10,6 +11,8 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 /**
+ * 基于redis list的lpush和rpop实现的FIFO模式的队列
+ *
  * @author WangJun <wangjuntytl@163.com>
  * @version 1.0 15/9/15
  * @since 1.6
@@ -17,9 +20,10 @@ import redis.clients.jedis.JedisPool;
 
 public class FIFOQueueImpl implements Queue {
 
-    protected static JedisPool jedisPool = JedisPoolServiceImpl.getJedisPoolService().getJedisPoolByHostName("haproxy");
+    public static JedisPool jedisPool = JedisPoolServiceImpl.getJedisPoolService().getJedisPoolByHostName("haproxy");
     protected static StopWatch stopWatch = new Log4JStopWatch();
     protected static Logger logger = LoggerFactory.getLogger(FIFOQueueImpl.class);
+
 
     private static class Single {
         public static Queue queue = new FIFOQueueImpl();
@@ -40,6 +44,7 @@ public class FIFOQueueImpl implements Queue {
         } catch (Exception e) {
             jedisPool.returnBrokenResource(jedis);
         }
+        Helper.remotePushCount.increment(key, 1);
     }
 
     @Override
@@ -58,6 +63,7 @@ public class FIFOQueueImpl implements Queue {
         } catch (Exception e) {
             jedisPool.returnBrokenResource(jedis);
         }
+        Helper.remotePopCount.increment(key, 1);
         return res;
     }
 
@@ -76,7 +82,7 @@ public class FIFOQueueImpl implements Queue {
 
     @Override
     public boolean lock(String key) {
-        key += (KeyCreate.get(key) + "_lock");
+        key = (KeyCreate.get(key) + "_lock");
         Jedis jedis = jedisPool.getResource();
         try {
             jedis.getSet(key, "1");
@@ -89,8 +95,23 @@ public class FIFOQueueImpl implements Queue {
     }
 
     @Override
+    public boolean lock(String key, int seconds) {
+        key = (KeyCreate.get(key) + "_lock");
+        Jedis jedis = jedisPool.getResource();
+        try {
+            jedis.getSet(key, "1");
+            jedis.expire(key,seconds);
+            jedisPool.returnResource(jedis);
+        } catch (Exception e) {
+            jedisPool.returnBrokenResource(jedis);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean isLock(String key) {
-        key += (KeyCreate.get(key) + "_lock");
+        key = (KeyCreate.get(key) + "_lock");
         Jedis jedis = jedisPool.getResource();
         String res = null;
         try {
@@ -106,7 +127,7 @@ public class FIFOQueueImpl implements Queue {
 
     @Override
     public boolean openLock(String key) {
-        key += (KeyCreate.get(key) + "_lock");
+        key = (KeyCreate.get(key) + "_lock");
         Jedis jedis = jedisPool.getResource();
         try {
             jedis.del(key);
@@ -118,18 +139,5 @@ public class FIFOQueueImpl implements Queue {
         return true;
     }
 
-    @Override
-    public boolean getTmpLock(String lockName) {
-        Jedis jedis = jedisPool.getResource();
-        String res = null;
-        try {
-            res = jedis.getSet(KeyCreate.get(lockName), "1");
-            jedis.expire(lockName, 66);
-            jedisPool.returnResource(jedis);
-        } catch (Exception e) {
-            jedisPool.returnBrokenResource(jedis);
-        }
-        return StringUtils.isEmpty(res);
-    }
 
 }

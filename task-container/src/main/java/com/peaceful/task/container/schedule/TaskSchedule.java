@@ -1,20 +1,20 @@
 package com.peaceful.task.container.schedule;
 
 import akka.actor.Cancellable;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.peaceful.task.container.TaskContainer;
-import com.peaceful.task.container.common.Constant;
-import com.peaceful.task.container.common.IdGenerate;
-import com.peaceful.task.container.common.Task;
-import com.peaceful.task.container.common.TaskContainerConf;
+import com.peaceful.task.container.admin.common.IdGenerate;
+import com.peaceful.task.container.admin.common.LoadDependModule;
+import com.peaceful.task.container.admin.common.Task;
+import com.peaceful.task.container.admin.common.TaskContainerConf;
 import com.peaceful.task.container.dispatch.DispatchContainer;
 import com.peaceful.task.container.exception.NotFindQueueException;
 import com.peaceful.task.container.invoke.InvokeContext;
 import com.peaceful.task.container.invoke.trace.InvokeTrace;
 import com.peaceful.task.container.msg.Task2;
-import com.peaceful.task.container.store.FlexibleRegist;
 import com.peaceful.task.container.store.TaskStore;
+import com.peaceful.task.container.store.help.RemoteFlexibleRegister;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import scala.concurrent.duration.FiniteDuration;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -38,8 +38,12 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class TaskSchedule {
 
-    private static Map<Class, Object> scheduleProcessMap = new IdentityHashMap<Class, Object>();
+    private static Map<Class, Object> scheduleProcessMap = new HashMap<Class, Object>();
     private static Logger logger = LoggerFactory.getLogger(TaskSchedule.class);
+
+    static {
+        LoadDependModule.loadToJVM();
+    }
 
     /**
      * 利用动态代理打断Java的原生方法的执行，获取运行时的调用信息，并序列化为json数据提交到任务存储中心
@@ -68,11 +72,9 @@ public abstract class TaskSchedule {
                         if (task != null) {
                             logger.debug("flexible task id {} -> {}", task.value(), forceName);
                         }
-                        // 保存动态任务到配置类中
-                        TaskContainerConf.getConf().flexibleTasks.add(forceName);
                         // 保存提交信息到任务中心，用于集群中的各个节点可以观察到
-                        FlexibleRegist.registFlexibleTaskToTaskCenter(Constant.FORCE_TASK_PERSISTENCE_QUEUE, forceName);
-                        task2.setQueueName(Constant.RUNNING_TIME_TASK_PREFIX + forceName);
+                        RemoteFlexibleRegister.registerFlexibleTaskToTaskCenter(forceName);
+                        task2.setQueueName(forceName);
                     } else if (task == null)
                         task2.setQueueName("commonQueue");
                     else {
@@ -114,7 +116,7 @@ public abstract class TaskSchedule {
             DispatchContainer.getHandlerChain().execute(invokeContext);
             InvokeTrace.end.execute(invokeContext);
         } catch (Exception e) {
-            logger.error("task2 invoke error {}", e.getCause());
+            logger.error("task {}-{} invoke error {},cause {}", task2.getId(), task2.getQueueName(), e, e.getCause());
         }
     }
 
@@ -141,7 +143,6 @@ public abstract class TaskSchedule {
     public static Cancellable schedule(FiniteDuration startTime, long delay, TimeUnit timeUnit, Runnable runnable) {
         return TaskContainer.getSystem().scheduler().schedule(startTime, Duration.create(delay, timeUnit), runnable, TaskContainer.getSystem().dispatcher());
     }
-
 
     public static class Schedule {
         // 强制更改任务名称，使其可以进入到别的队列

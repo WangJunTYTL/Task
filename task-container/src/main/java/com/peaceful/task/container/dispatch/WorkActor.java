@@ -3,7 +3,7 @@ package com.peaceful.task.container.dispatch;
 import akka.actor.UntypedActor;
 import akka.event.DiagnosticLoggingAdapter;
 import akka.event.Logging;
-import com.peaceful.task.container.common.TaskContainerConf;
+import com.peaceful.task.container.admin.common.TaskContainerConf;
 import com.peaceful.task.container.msg.Coordination;
 import com.peaceful.task.container.msg.Task;
 import com.peaceful.task.container.msg.Task2;
@@ -23,6 +23,9 @@ import java.util.Map;
 public class WorkActor extends UntypedActor {
 
     final DiagnosticLoggingAdapter log = Logging.getLogger(this);
+    /**
+     * asynchronous process class, the object will deprecated in 2.0 version
+     */
     Object processQueue;
     FastClass fastClass;
     Class<?> aClass;
@@ -49,9 +52,11 @@ public class WorkActor extends UntypedActor {
                     fastMethod.invoke(processQueue, new Object[]{task.getParams()});
                 }
             } catch (Exception e) {
-                log.error(e, "exe task error id is " + task.getId() + " cause is  " + e.getCause() + " error is \n" + e);
+                log.error("worker invoke task {}-{} found error {},cause {}",task.getId(),task.getQueueName(),e,e.getCause());
+//                log.error(e, "exe task error id is " + task.getId() + " cause is  " + e.getCause() + " error is \n" + e);
             }
-            getSender().tell(new Coordination(task.id, task.getQueueName()), getSelf()); // tell sender , it see message
+            // worker tell router ,it had completed task
+            getSender().tell(new Coordination(task.id, task.getQueueName()), getSelf());
         } else if (o instanceof Task2) {
             Task2 task2 = (Task2) o;
             log.info("start " + task2.toString());

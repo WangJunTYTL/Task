@@ -3,7 +3,6 @@ package com.peaceful.task.container.msg;
 import com.peaceful.task.container.dispatch.DispatchContainer;
 import com.peaceful.task.container.schedule.TaskSchedule;
 import com.alibaba.fastjson.JSON;
-import net.sf.cglib.beans.BeanMap;
 
 import java.io.Serializable;
 

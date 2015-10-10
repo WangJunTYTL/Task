@@ -30,7 +30,7 @@
         <level value="INFO"/>
         <appender-ref ref="CoalescingStatistics"/>
     </logger>
-    <logger name="cn.edaijia.queue" additivity="false">
+    <logger name="com.peaceful.queue" additivity="false">
         <level value="error"/>
         <appender-ref ref="CoalescingStatistics"/>
     </logger>

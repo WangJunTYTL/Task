@@ -12,10 +12,10 @@
 
     <modules>
         <module>task-store</module>
+        <module>task-console</module>
         <module>task-container</module>
-        <module>task-monitor</module>
         <module>task-admin</module>
-        <module>task-container-test</module>
+        <module>task-test</module>
     </modules>
 
 

@@ -22,7 +22,7 @@
     <!-- Custom styles for this template -->
     <link href="/css/dashboard.css" rel="stylesheet">
 
-    <script src="/js/jquery-1.8.3.min.js"></script>
+    <script src="/js/jquery-1.9.1.js"></script>
     <script src="/js/bootstrap-3.5.js"></script>
 
 

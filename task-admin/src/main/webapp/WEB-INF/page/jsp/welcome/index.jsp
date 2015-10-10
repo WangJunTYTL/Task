@@ -14,40 +14,79 @@
 
 <%--<script src="//cdn.bootcss.com/holder/2.8.2/holder.js"></script>--%>
 <script src="/js/holder.js"></script>
+<script src="/js/Chart.js"></script>
 <h1 class="page-header">Dashboard</h1>
 
 <div class="row placeholders">
     <c:forEach items="${focusedTaskData}" var="task">
-        <div class="col-xs-6 col-sm-3 placeholder">
+        <div class="col-xs-6 col-sm-2 placeholder">
             <c:choose>
             <c:when test="${task.remain < 666}">
-                <img data-src="holder.js/100x100?auto=yes&theme=vine&text=${task.remain}" class="img-responsive"
+                <img data-src="holder.js/66x66?auto=yes&theme=vine&text=${task.remain}" class="img-responsive"
             </c:when>
             <c:otherwise>
-            <img data-src="holder.js/100x100?auto=yes&theme=lava&text=${task.remain}" class="img-responsive"
+            <img data-src="holder.js/66x66?auto=yes&theme=lava&text=${task.remain}" class="img-responsive"
             </c:otherwise>
             </c:choose>
                  alt="Generic placeholder thumbnail">
-            <h4>${task.id}</h4>
+            <h5>${task.id}</h5>
             <span class="text-muted"></span>
+
+            <div id="chartGraph_${task.id}" style="display: none">${task.chartDataJson}</div>
         </div>
     </c:forEach>
 
     <c:forEach items="${firstFlexibleTaskData}" var="task">
-        <div class="col-xs-6 col-sm-3 placeholder">
+        <div class="col-xs-6 col-sm-2 placeholder">
             <c:choose>
             <c:when test="${task.remain < 666}">
-                <img data-src="holder.js/100x100?auto=yes&theme=vine&text=${task.remain}" class="img-responsive"
+                <img data-src="holder.js/66x66?auto=yes&theme=vine&text=${task.remain}" class="img-responsive"
             </c:when>
             <c:otherwise>
-            <img data-src="holder.js/100x100?auto=yes&theme=lava&text=${task.remain}" class="img-responsive"
+            <img data-src="holder.js/66x66?auto=yes&theme=lava&text=${task.remain}" class="img-responsive"
             </c:otherwise>
             </c:choose>
                  alt="Generic placeholder thumbnail">
-            <h4>${task.id}</h4>
+            <h5>${task.id}</h5>
             <span class="text-muted"></span>
+
+            <div id="chartGraph_${task.id}" style="display: none">${task.chartDataJson}</div>
         </div>
     </c:forEach>
+</div>
+
+<h2 class="sub-header">Push Pop</h2>
+
+<div class="container-fluid" id="graph_canvas">
+
+    <%--<div class="col-xs-6 col-sm-4 placeholder">
+        <h5> aa </h5>
+
+        <div>
+            <canvas id="myChart" height="400"></canvas>
+        </div>
+    </div>
+    <div class="col-xs-6 col-sm-4 placeholder">
+        <h5> aa </h5>
+
+        <div>
+            <canvas id="myChart2" height="400"></canvas>
+        </div>
+    </div>
+    <div class="col-xs-6 col-sm-4 placeholder">
+        <h5> aa </h5>
+
+        <div>
+            <canvas id="myChart3" height="400"></canvas>
+        </div>
+    </div>
+    <div class="col-xs-6 col-sm-4 placeholder">
+        <h5> aa </h5>
+
+        <div>
+            <canvas id="myChart4" height="400"></canvas>
+        </div>
+    </div>--%>
 </div>
 
 <h2 class="sub-header">Flexible Tasks</h2>
@@ -183,6 +222,7 @@
     </table>
 </div>
 
+<script src="/js/index-graph.js"></script>
 
 <jsp:include page="../../../../template/pageFooter.jsp"></jsp:include>
 

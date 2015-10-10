@@ -6,7 +6,7 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
-import com.peaceful.task.container.common.TaskContainerConf;
+import com.peaceful.task.container.admin.common.TaskContainerConf;
 import com.peaceful.task.container.msg.Task;
 import com.peaceful.task.container.msg.Task2;
 import scala.concurrent.duration.Duration;
@@ -29,7 +29,7 @@ public class TaskSuperviseActor extends UntypedActor {
     {
         List<Routee> routees = new ArrayList<Routee>();
         for (int i = 0; i < TaskContainerConf.getConf().router; i++) {
-            ActorRef r = getContext().actorOf(Props.create(DispatchActor.class));
+            ActorRef r = getContext().actorOf(Props.create(RouterActor.class));
             getContext().watch(r);
             routees.add(new ActorRefRoutee(r));
         }
@@ -41,11 +41,9 @@ public class TaskSuperviseActor extends UntypedActor {
     public void onReceive(Object msg) throws Exception {
         if (msg instanceof Task || msg instanceof Task2) {
             router.route(msg, getSender());
-
-
         } else if (msg instanceof Terminated) {
             router = router.removeRoutee(((Terminated) msg).actor());
-            ActorRef r = getContext().actorOf(Props.create(DispatchActor.class));
+            ActorRef r = getContext().actorOf(Props.create(RouterActor.class));
             getContext().watch(r);
             router = router.addRoutee(new ActorRefRoutee(r));
         } else {

@@ -303,15 +303,9 @@
 
 ### 监控
                           
-【currentPressure】:当前任务容器处理任务的系统的压力，最大值为1，表示系统已经火力全开，达到最大处理速度
+介绍 TODO                          
 
-【commitTaskCount】：监测节点已经往任务容器提及的任务数
-
-【maxParallel】:当前节点系统批处理能力的最大值，比如下面，代表可以同时处理12个任务
-
-【队列任务】：代表当前节点中用到的队列有哪些以及每个队列积压的任务数 
-
-<img src="./doc/monitor.jpg" width="600px">
+<img src="./doc/monitor.png" width="600px">
 
 
 Create by WangJun on 2015-09-05

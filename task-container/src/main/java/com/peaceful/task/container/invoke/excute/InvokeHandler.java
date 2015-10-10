@@ -1,11 +1,10 @@
 package com.peaceful.task.container.invoke.excute;
 
-import com.peaceful.task.container.common.TaskContainerLogger;
+import com.peaceful.task.container.admin.common.TaskContainerLogger;
+import com.peaceful.task.container.dispatch.DispatchContainer;
 import com.peaceful.task.container.invoke.InvokeContext;
 import com.peaceful.task.container.invoke.chain.Context;
-import com.peaceful.task.container.dispatch.DispatchContainer;
 import net.sf.cglib.reflect.FastClass;
-import net.sf.cglib.reflect.FastMethod;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class InvokeHandler implements Handler {
 //        FastMethod fastMethod = getFastClass(invokeContext.aClass).getMethod(invokeContext.methodName,invokeContext.parameterTypes);
 //        fastMethod.invoke(instance,invokeContext.newArgs);
         if (result != null) {
-            TaskContainerLogger.LOGGER.warn("{}.{} Suggested that do not have a return value", invokeContext.aClass.getName(), invokeContext.methodName);
+            TaskContainerLogger.ROOT_LOGGER.warn("{}.{} Suggested that do not have a return value", invokeContext.aClass.getName(), invokeContext.methodName);
         }
         return false;
     }
@@ -48,7 +47,7 @@ public class InvokeHandler implements Handler {
     }
 
     private static FastClass getFastClass(Class zClass) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        Map<Class, FastClass> fastClassContainer = DispatchContainer.getDispatchFastclassContainer();
+        Map<Class, FastClass> fastClassContainer = DispatchContainer.getDispatchFastClassContainer();
         if (fastClassContainer.containsKey(zClass)) {
             //logger.warn("{} has already exists", task2.getaClass().getName());
         } else {

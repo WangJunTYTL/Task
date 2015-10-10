@@ -23,10 +23,11 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.edaijia</groupId>
+            <groupId>com.peaceful</groupId>
             <artifactId>perf4j</artifactId>
             <version>0.9.17-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 
 </project>

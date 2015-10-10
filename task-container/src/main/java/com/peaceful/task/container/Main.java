@@ -1,7 +1,6 @@
 package com.peaceful.task.container;
 
 import akka.actor.ActorSystem;
-import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 /**
