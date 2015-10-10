@@ -26,7 +26,7 @@ public class CommitTaskDemo {
 
     public static void simple() {
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++)
+        for (int i = 0; i < 500000; i++)
             hello.test("hello world");
         // Object 方法直接执行
         Util.report(hello.hashCode());

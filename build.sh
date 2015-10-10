@@ -42,25 +42,30 @@ wait
 echo "准备下载依赖包并开始构建 ..."
 
 #下载依赖包，最好手动将依赖包install到你的本地仓库
-[ ! -d "peaceful-basic-platform" ]   && git clone https://github.com/WangJunTYTL/peaceful-basic-platform.git
-
+echo "下载依赖包peaceful-basic-platform"
+[ ! -d "peaceful-basic-platform" ] && rm -rf peaceful-basic-platform
+git clone https://github.com/WangJunTYTL/peaceful-basic-platform.git ||  exit 1
 cd peaceful-basic-platform
-mvn clean -P${ENV} install -o  -Dmaven.test.skip=true
+mvn clean -P${ENV} install  -Dmaven.test.skip=true || exit 1
 cd ..
 
-[ ! -d "redismanage" ]   && git clone https://github.com/WangJunTYTL/redismanage.git
-
+echo "redismanage"
+[ ! -d "redismanage" ]   && rm -rf redismanage
+git clone https://github.com/WangJunTYTL/redismanage.git || exit 1
 cd redismanage
-mvn clean -P${ENV} install -o  -Dmaven.test.skip=true
+mvn clean -P${ENV} install  -Dmaven.test.skip=true || exit 1
 cd ..
 
 wait
 rm -rf peaceful-basic-platform
 rm -rf redismanage
 
-mvn -P${ENV} clean compile -o -Dmaven.test.skip=true
+mvn -P${ENV} clean compile  -Dmaven.test.skip=true || exit 1
 
-cd task-container
-mvn -P${ENV} install -o  -Dmaven.test.skip=true
+echo "构建成功"
+
+#
+#cd task-test
+#mvn -P${ENV} jetty:run  -Dmaven.test.skip=true
 
 
