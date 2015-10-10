@@ -1,7 +1,7 @@
 package com.peaceful.task.container.msg;
 
-import com.peaceful.task.container.admin.common.IdGenerate;
-import com.peaceful.task.container.admin.common.TaskContainerConf;
+import com.peaceful.task.container.common.IdGenerate;
+import com.peaceful.task.container.common.TaskContainerConf;
 import com.peaceful.task.container.exception.AddTaskQueueException;
 import com.peaceful.task.container.exception.NotFindQueueException;
 import com.peaceful.task.container.store.TaskStore;

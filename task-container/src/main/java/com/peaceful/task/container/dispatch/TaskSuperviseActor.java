@@ -6,7 +6,7 @@ import akka.routing.ActorRefRoutee;
 import akka.routing.RoundRobinRoutingLogic;
 import akka.routing.Routee;
 import akka.routing.Router;
-import com.peaceful.task.container.admin.common.TaskContainerConf;
+import com.peaceful.task.container.common.TaskContainerConf;
 import com.peaceful.task.container.msg.Task;
 import com.peaceful.task.container.msg.Task2;
 import scala.concurrent.duration.Duration;

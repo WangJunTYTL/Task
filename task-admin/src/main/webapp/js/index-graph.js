@@ -1,5 +1,4 @@
 $(function () {
-
     var chartData = $("div[id^='chartGraph_']");
     for (var n = 0; n < chartData.length; n++) {
         var parseData = JSON.parse($(chartData[n]).html());
@@ -24,9 +23,9 @@ $(function () {
                 }
             ]
         }
-        var div = $("<div>").attr("class", "col-xs-12 col-sm-4 placeholder");
+        var div = $("<div>").attr("class", "col-xs-12 col-md-6 col-lg-4 placeholder");
         var title = $("<h5>").html(parseData.id);
-        var canvas = $("<canvas>").attr("id", "chart" + n).attr("height", 300);
+        var canvas = $("<canvas>").attr("id", "chart" + n).attr("height", 268);
         $(div).append(title);
         $(div).append(canvas);
         $("#graph_canvas").append(div);

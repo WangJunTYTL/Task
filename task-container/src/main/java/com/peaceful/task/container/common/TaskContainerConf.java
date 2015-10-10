@@ -1,4 +1,4 @@
-package com.peaceful.task.container.admin.common;
+package com.peaceful.task.container.common;
 
 import com.peaceful.task.container.exception.TaskContainerConfigException;
 import com.typesafe.config.Config;

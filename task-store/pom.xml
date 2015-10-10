@@ -23,9 +23,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.peaceful</groupId>
+            <groupId>org.perf4j</groupId>
             <artifactId>perf4j</artifactId>
-            <version>0.9.17-SNAPSHOT</version>
+            <version>0.9.16</version>
         </dependency>
 
     </dependencies>

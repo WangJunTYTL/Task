@@ -1,4 +1,4 @@
-package com.peaceful.task.container.admin.common;
+package com.peaceful.task.container.common;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;

@@ -1,7 +1,7 @@
 package com.peaceful.task.container.admin.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.peaceful.task.container.admin.common.TaskConsoleAPI;
+import com.peaceful.task.container.common.TaskConsoleAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

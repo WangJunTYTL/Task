@@ -14,7 +14,7 @@
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>任务容器管理系统</title>
+    <title>Task Console</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap-3.5.css" rel="stylesheet">

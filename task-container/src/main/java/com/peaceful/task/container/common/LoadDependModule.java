@@ -1,4 +1,4 @@
-package com.peaceful.task.container.admin.common;
+package com.peaceful.task.container.common;
 
 import com.peaceful.task.container.console.BasicConsoleConf;
 import com.peaceful.task.container.store.BasicTaskStoreConf;

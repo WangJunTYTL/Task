@@ -1,6 +1,6 @@
 package com.peaceful.task.container.dispatch;
 
-import com.peaceful.task.container.admin.common.TaskContainerConf;
+import com.peaceful.task.container.common.TaskContainerConf;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

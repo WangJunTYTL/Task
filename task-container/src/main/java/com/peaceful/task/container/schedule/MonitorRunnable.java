@@ -1,6 +1,6 @@
 package com.peaceful.task.container.schedule;
 
-import com.peaceful.task.container.admin.common.ConfConstant;
+import com.peaceful.task.container.common.ConfConstant;
 import com.peaceful.task.container.console.Monitor;
 import com.peaceful.task.container.console.TaskBean;
 import com.peaceful.task.container.console.TaskBeanAnalyzing;

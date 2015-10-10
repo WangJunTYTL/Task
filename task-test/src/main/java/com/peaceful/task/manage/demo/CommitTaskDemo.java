@@ -1,7 +1,7 @@
 package com.peaceful.task.manage.demo;
 
 import com.peaceful.common.util.Util;
-import com.peaceful.task.container.admin.common.TaskContainerConf;
+import com.peaceful.task.container.common.TaskContainerConf;
 import com.peaceful.task.container.schedule.TaskSchedule;
 import com.peaceful.task.container.store.BasicTaskStoreConf;
 

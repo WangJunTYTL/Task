@@ -1,6 +1,6 @@
 package com.peaceful.task.manage.demo;
 
-import com.peaceful.task.container.admin.common.Task;
+import com.peaceful.task.container.common.Task;
 import com.peaceful.common.util.Util;
 
 /**

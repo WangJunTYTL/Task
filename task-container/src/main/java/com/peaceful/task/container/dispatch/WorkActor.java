@@ -3,7 +3,7 @@ package com.peaceful.task.container.dispatch;
 import akka.actor.UntypedActor;
 import akka.event.DiagnosticLoggingAdapter;
 import akka.event.Logging;
-import com.peaceful.task.container.admin.common.TaskContainerConf;
+import com.peaceful.task.container.common.TaskContainerConf;
 import com.peaceful.task.container.msg.Coordination;
 import com.peaceful.task.container.msg.Task;
 import com.peaceful.task.container.msg.Task2;
