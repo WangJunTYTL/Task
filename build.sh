@@ -13,7 +13,7 @@
 #   2. 进入peaceful-basic-platform 目录 ，执行 mvn install  -Dmaven.test.skip=true
 #   3. git clone https://github.com/WangJunTYTL/redismanage.git
 #   4. 进入redismanage 目录 ，执行 mvn install  -Dmaven.test.skip=true
-#   5. 进入task-container 目录，执行 mvn install  -Dmaven.test.skip=true
+#   5. 进入task目录，执行 mvn install  -Dmaven.test.skip=true
 #==================================
 
 source /etc/profile
@@ -43,14 +43,14 @@ echo "准备下载依赖包并开始构建 ..."
 
 #下载依赖包，最好手动将依赖包install到你的本地仓库
 echo "下载依赖包peaceful-basic-platform"
-[ ! -d "peaceful-basic-platform" ] && rm -rf peaceful-basic-platform
+[ -d "peaceful-basic-platform" ] && rm -rf peaceful-basic-platform
 git clone https://github.com/WangJunTYTL/peaceful-basic-platform.git ||  exit 1
 cd peaceful-basic-platform
 mvn clean -P${ENV} install  -Dmaven.test.skip=true || exit 1
 cd ..
 
 echo "redismanage"
-[ ! -d "redismanage" ]   && rm -rf redismanage
+[ -d "redismanage" ]   && rm -rf redismanage
 git clone https://github.com/WangJunTYTL/redismanage.git || exit 1
 cd redismanage
 mvn clean -P${ENV} install  -Dmaven.test.skip=true || exit 1
@@ -60,12 +60,9 @@ wait
 rm -rf peaceful-basic-platform
 rm -rf redismanage
 
-mvn -P${ENV} clean compile  -Dmaven.test.skip=true || exit 1
-
-echo "构建成功"
-
-#
-#cd task-test
-#mvn -P${ENV} jetty:run  -Dmaven.test.skip=true
+mvn -P${ENV} clean install  -Dmaven.test.skip=true || exit 1
+echo '-------------------------------------------------------------------------------'
+echo "恭喜你!构建成功,接下来你可以运行样例项目task-test进行测试..."
+echo '-------------------------------------------------------------------------------'
 
 
