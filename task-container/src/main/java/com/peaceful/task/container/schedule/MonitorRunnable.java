@@ -65,8 +65,8 @@ public class MonitorRunnable implements Runnable {
         } catch (Exception e) {
             logger.error("MonitorRunnable error {},cause {}", e,e.getCause());
         } finally {
-            remoteLock.unLock();
             TaskSchedule.scheduleOnce(ConfConstant.MONITOR_TICK, TimeUnit.SECONDS, this);
+            remoteLock.unLock();
         }
     }
 }
