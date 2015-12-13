@@ -17,7 +17,6 @@
     <!--log config start-->
     <logger name="org.perf4j.TimingLogger" additivity="false">
         <level value="INFO"/>
-        <appender-ref ref="CoalescingStatistics"/>
     </logger>
 
 

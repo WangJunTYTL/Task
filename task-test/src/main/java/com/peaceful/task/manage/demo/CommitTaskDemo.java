@@ -18,15 +18,15 @@ public class CommitTaskDemo {
 
     public static void main(String[] args) {
         BasicTaskStoreConf.projectName = TaskContainerConf.getConf().projectName;
+        simple();
 //        for (int i = 0; i < 1000; i++)
-            simple();
 //            forceChangeTaskName();
     }
 
 
     public static void simple() {
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 500000; i++)
+        for (int i = 0; i < 10000; i++)
             hello.test("hello world");
         // Object 方法直接执行
         Util.report(hello.hashCode());

@@ -143,10 +143,14 @@
 	2. 导出jar文件直接运行，启动之后会在后台监听任务储存中心
 	
 		程序入口com.peaceful.task.container.Main
+
+    3. 内置jetty插件启动
+
+       cd ./task-test && mvn jetty:run
 		
 ##### 2. 作为job机单独运行
 
-	//todo	管理命令、界面待开发
+	//todo	控制台交互程序
 	
 ##### 启动后输出以下log日志说明启动成功
 	
@@ -208,8 +212,51 @@
 ##### 一旦你注册Hello对象后，Hello对象所有的方法将会变成异步，只需要一次性注册。然后你就可以正常调用你的方法了，如下，测试该方法已是一个异步调用的方法
 
 	hello.test("hello world");
-	
-	
+
+#### 参数支持
+
+如果你还在使用1.0-SANPSHOT版本的任务提交方式,它只支持k<String>\v<String>形式的Map参数格式.在2.0基本已经支持所有的格式.
+
+*暂不支持的参数格式数*
+
+1. char
+2. short
+3. float
+4. 以上对应的包装格式Char,Short,Float
+
+*已支持的参数格式*
+
+1. 除以上不支持的类型以外的所有基本类型即对应的包装类型
+2. 集合类型:Set\Map\List
+3. 数组
+4. POJO类型
+
+*自定义参数类型解析*
+
+继承com.peaceful.task.container.invoke.args.Parse接口
+
+如下:
+
+````
+public class BooleanParse implements Parse {
+
+    @Override
+    public boolean execute(Context context) throws Exception {
+        InvokeContext invokeContext = (InvokeContext) context;
+        if (invokeContext.parameterTypes[invokeContext.index].equals(Boolean.class)) {
+            invokeContext.newArgs[invokeContext.index] = Boolean.valueOf(invokeContext.args[invokeContext.index].toString());
+            invokeContext.index++;
+            return true;
+        }
+        return false;
+    }
+}
+
+parseChain.addCommand(new BooleanParse());
+
+````
+
+
 ### 任务提交和执行过程
 
 【注册异步类】： `TaskSchedule.registerASyncClass`的主要作用获取指定类的代理类，目的只要是打断正常方法的调用，获取方法的调用信息，包括方法名，参数，参数类型，然后封装我Task2对象。
@@ -232,7 +279,7 @@
 	del sendBonus+"_"+projectName   清除任务
 
 
-### 强制更改任务名称
+### 动态创建任务队列
 
 强制更改任务的名称是为了是任务可以进入到不同的队列，让开发人员可以把一批方法的执行放入到同一个队列，可以在代码中灵活的管理任务，比如我有一个大批量发送短信的需求，A需求发送300W，B需求需要发送500W
 ，而我希望这两个需求发送短信时在不同的队列中，方便我可以同时观察这两个需求的处理情况，则你可以强制在发送A短信前把任务名称更改，覆盖注解配置的内容，比如下方
@@ -264,6 +311,48 @@
     
         }
 
+### 实现调用时的AOP方式拦截
+
+为了扩展方法的调用前后的逻辑,你也可以实现AOP方式的拦截,需要实现:com.peaceful.task.container.invoke.trace.Trace
+
+如下,查看方法的调用时间:
+
+````
+public class InvokeInfoTrace implements Trace {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Override
+    public boolean execute(Context context) throws Exception {
+        InvokeContext invokeContext = (InvokeContext) context;
+        if (invokeContext.get(InvokeContext.START_TIME) != null) {
+            long start = Long.valueOf((String) invokeContext.get(InvokeContext.START_TIME));
+            logger.info("complete task {}-{} {} cost time {}",
+                    invokeContext.get(InvokeContext.TASK_ID),
+                    invokeContext.get(InvokeContext.QUEUE_NAME),
+                    invokeContext.aClass + "." + invokeContext.methodName ,
+                    System.currentTimeMillis() - start);
+        }
+        return false;
+    }
+}
+
+
+InvokeTrace.addEndTrace(new InvokeInfoTrace);
+````
+
+
+### 任务调度负载均衡
+
+默认对任务的负载采用轮巡和时间片轮转的方式,每个任务序列都有同样的机会获得执行的时间片.`注意`:如果在执行的时间片中,正在调度的任务还没有调度完成,则会继续占用时间片.
+如果长久出现某一任务单元抢占时间片的时间过长,大于了系统所能分配的时间片的时间,则会出现其它任务单元出现阻塞的情况.目前最好的办法是,保证自己的任务单元被切割的足够的小,不会出现长时间执行的任务单元
+
+
+### 避免某个任务人员长时间抢占cpu资源,导致其它任务单元堵塞
+
+1. todo:任务单元执行超时时间设置
+1. todo:长时间执行任务单元提供单独的调度器
+1. todo:增加手动分配调度机器节点功能,允许某类任务单元只允许在某些集群节点中调用
 
 	
 ### 手动定时job
@@ -287,6 +376,11 @@
        
        //取消名为test的job
        TimingJob.cancel("test");
+
+
+### 扩展任务存储实现
+
+TODO:暂时参考task-store模块,后期会支持自动切换,目前支持redis,后期会支持kafka\rabbitmq ...
 
 ### 任务容器集群
 

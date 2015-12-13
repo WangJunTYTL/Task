@@ -19,6 +19,5 @@ public class Hello {
     @Task("testQueue2")
     public void test2(String str){
         Util.report(str);
-
     }
 }
