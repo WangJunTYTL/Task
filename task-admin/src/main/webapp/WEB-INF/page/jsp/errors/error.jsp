@@ -16,10 +16,7 @@
     <h4 class="page-header text-danger text-center">Sorry,Service errors</h4>
 
     <div class="text-center">
-
-        <p> if you see this message ,  please contact us</p>
-        <p>Email:<a href="mailto:wangjun(at)edaijia-inc.cn?Subject=open service error&Body=你好">wangjun@edaijia-inc.cn</a></p>
-        <img src="/image/logo.png">
+        ERROR
     </div>
 </div>
 </body>
