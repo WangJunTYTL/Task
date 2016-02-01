@@ -50,7 +50,7 @@ mvn clean -P${ENV} -f peaceful-parent/pom.xml install  -Dmaven.test.skip=true ||
 mvn clean -P${ENV} install  -Dmaven.test.skip=true || exit 1
 cd ..
 
-echo "redismanage"
+echo "下载依赖包redismanage"
 [ -d "redismanage" ]   && rm -rf redismanage
 git clone https://github.com/WangJunTYTL/redismanage.git || exit 1
 cd redismanage
@@ -61,7 +61,7 @@ wait
 rm -rf peaceful-basic-platform
 rm -rf redismanage
 
-mvn -P${ENV} clean install  -Dmaven.test.skip=true || exit 1
+mvn -P${ENV} clean install  -Dmaven.test.skip=true -U || exit 1
 echo '-------------------------------------------------------------------------------'
 echo "恭喜你!构建成功,接下来你可以运行样例项目task-test进行测试..."
 echo '-------------------------------------------------------------------------------'

@@ -1,6 +1,6 @@
 package com.peaceful.task.container.store;
 
-import com.peaceful.common.redis.proxy.JedisPoolServiceImpl;
+import com.peaceful.common.redis.service.JedisPoolService;
 import com.peaceful.task.container.store.help.Helper;
 import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
@@ -20,7 +20,7 @@ import redis.clients.jedis.JedisPool;
 
 public class FIFOQueueImpl implements Queue {
 
-    public static JedisPool jedisPool = JedisPoolServiceImpl.getJedisPoolService().getJedisPoolByHostName("haproxy");
+    public static JedisPool jedisPool = JedisPoolService.getJedisPoolService().getJedisPoolByHostName("haproxy");
     protected static StopWatch stopWatch = new Log4JStopWatch();
     protected static Logger logger = LoggerFactory.getLogger(FIFOQueueImpl.class);
 
@@ -100,7 +100,7 @@ public class FIFOQueueImpl implements Queue {
         Jedis jedis = jedisPool.getResource();
         try {
             jedis.getSet(key, "1");
-            jedis.expire(key,seconds);
+            jedis.expire(key, seconds);
             jedisPool.returnResource(jedis);
         } catch (Exception e) {
             jedisPool.returnBrokenResource(jedis);
