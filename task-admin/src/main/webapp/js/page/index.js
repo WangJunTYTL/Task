@@ -74,7 +74,6 @@ $(function () {
                     }
                     tr.append($('<td>server</td>'));
                 } else {
-                    clientNodes.push(node);
                     tr.append("<td> <a class='text-danger updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
                     tr.append($('<td>client</td>'));
                 }
