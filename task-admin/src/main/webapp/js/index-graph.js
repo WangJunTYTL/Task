@@ -37,7 +37,7 @@ $(function () {
                 datasetFill: true
             });
         }
-    }catch(e){
+    } catch (e) {
 
     }
 });

@@ -24,8 +24,10 @@
 
     <script src="/js/jquery-1.9.1.js"></script>
     <script src="/js/bootstrap-3.5.js"></script>
-
+    <script src="/js/helper/Map.js"></script>
 
 </head>
 
 <body>
+
+<div id="wrapper">

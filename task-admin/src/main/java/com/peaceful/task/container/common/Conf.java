@@ -4,9 +4,16 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigList;
 import com.typesafe.config.ConfigValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * container cluster list conf and web front-end conf
@@ -18,16 +25,22 @@ import java.util.Map;
 
 public class Conf {
 
-    public Map<String, String> clusterMap = new HashMap<String, String>();
+    public List<String> clusterList = new ArrayList<String>();
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final ScheduledExecutorService SCHEDULE = Executors.newScheduledThreadPool(1);
 
     private Conf() {
-        Config config = ConfigFactory.load("taskCluster");
-        // cluster list
-        ConfigList list = config.getList("taskCluster.clusterList");
-        for (ConfigValue configValue : list) {
-            Config config1 = configValue.atPath("cluster").getConfig("cluster");
-            clusterMap.put(config1.getString("name"), config1.getString("ip") + ":" + config1.getString("port") + config1.getString("url"));
-        }
+        SCHEDULE.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                Config config = ConfigFactory.load("taskCluster");
+                // cluster list
+                List<String> list = config.getStringList("taskCluster.clusterList");
+                clusterList = list;
+            }
+        },0,5, TimeUnit.SECONDS);
+
+
     }
 
     private static class Single {

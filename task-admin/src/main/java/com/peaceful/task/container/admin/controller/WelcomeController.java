@@ -1,0 +1,40 @@
+package com.peaceful.task.container.admin.controller;
+
+import com.peaceful.common.redis.service.Redis;
+import com.peaceful.common.util.Http;
+import com.peaceful.task.container.task.api.RedisControllerApi;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.View;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.Set;
+
+import static com.peaceful.common.redis.service.Redis.cmd;
+
+/**
+ * @author WangJun
+ * @version 1.0 16/3/31
+ */
+@RequestMapping("/")
+@Controller
+public class WelcomeController {
+
+
+    @RequestMapping(value = {"index", ""})
+    public String index(HttpServletRequest request) {
+        String name = (String) request.getAttribute("currentCluster");
+        return "welcome/index";
+    }
+
+    @RequestMapping(value = {"help"})
+    public String help(HttpServletRequest request) {
+        String name = (String) request.getAttribute("currentCluster");
+        return "help/index";
+    }
+
+
+}

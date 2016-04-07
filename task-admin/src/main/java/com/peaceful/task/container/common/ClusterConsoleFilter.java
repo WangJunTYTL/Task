@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,21 +28,14 @@ public class ClusterConsoleFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String currentCluster = request.getParameter("currentCluster");
         if (currentCluster == null || currentCluster.equals("")) {
-            Set<String> keys = Conf.getConf().clusterMap.keySet();
+            List<String> keys = Conf.getConf().clusterList;
             for (String key : keys) {
                 currentCluster = key;
                 break;
             }
         }
-        request.setAttribute("clusterMap", JSON.toJSONString(Conf.getConf().clusterMap));
         request.setAttribute("currentCluster", currentCluster);
-        String refresh = request.getParameter("refresh");
-        if (refresh == null || refresh.equals("")) refresh = "30";
-        request.setAttribute("refresh", Integer.valueOf(refresh));
-        Map<String, String> clusterMap = Conf.getConf().clusterMap;
-        TaskConsoleAPI.setAdd(clusterMap.get(currentCluster));
         filterChain.doFilter(request, servletResponse);
-
     }
 
     @Override

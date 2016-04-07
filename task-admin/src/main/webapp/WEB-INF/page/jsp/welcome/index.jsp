@@ -9,175 +9,108 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 
-<jsp:include page="../../../../template/pageHeader.jsp"></jsp:include>
-<jsp:include page="../../../../template/nav.jsp"></jsp:include>
-
+<jsp:include page="../../../../template/pageHeader02.jsp"></jsp:include>
+<jsp:include page="../../../../template/nav02.jsp"></jsp:include>
 <%--<script src="//cdn.bootcss.com/holder/2.8.2/holder.js"></script>--%>
 <script src="/js/holder.js"></script>
-<script src="/js/Chart.js"></script>
-<h1 class="page-header">Dashboard</h1>
+<%--<script src="/js/Chart-1.0.2.js"></script>--%>
+<%--<h1 class="page-header">Dashboard</h1>--%>
+<script src="/js/echart/echarts.js"></script>
 
-<div class="row placeholders">
-    <c:forEach items="${focusedTaskData}" var="task">
-        <div class="col-xs-4 col-md-3 col-lg-2 placeholder">
-            <c:choose>
-            <c:when test="${task.remain < 666}">
-                <img data-src="holder.js/66x66?auto=yes&theme=vine&text=${task.remain}" class="img-responsive"
-            </c:when>
-            <c:otherwise>
-            <img data-src="holder.js/66x66?auto=yes&theme=lava&text=${task.remain}" class="img-responsive"
-            </c:otherwise>
-            </c:choose>
-                 alt="Generic placeholder thumbnail">
-            <h5>${task.id}</h5>
-            <span class="text-muted"></span>
-
-            <div id="chartGraph_${task.id}" style="display: none">${task.chartDataJson}</div>
-        </div>
-    </c:forEach>
-
-    <c:forEach items="${firstFlexibleTaskData}" var="task">
-        <div class="col-xs-4 col-md-3 col-lg-2 placeholder">
-            <c:choose>
-            <c:when test="${task.remain < 666}">
-                <img data-src="holder.js/66x66?auto=yes&theme=vine&text=${task.remain}" class="img-responsive"
-            </c:when>
-            <c:otherwise>
-            <img data-src="holder.js/66x66?auto=yes&theme=lava&text=${task.remain}" class="img-responsive"
-            </c:otherwise>
-            </c:choose>
-                 alt="Generic placeholder thumbnail">
-            <h5>${task.id}</h5>
-            <span class="text-muted"></span>
-
-            <div id="chartGraph_${task.id}" style="display: none">${task.chartDataJson}</div>
-        </div>
-    </c:forEach>
-</div>
-
-<h2 class="sub-header">TPS</h2>
-
-<div class="container-fluid" id="graph_canvas">
-
-    <%--<div class="col-xs-6 col-sm-4 placeholder">
-        <h5> aa </h5>
-
-        <div>
-            <canvas id="myChart" height="400"></canvas>
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="sub-header">TPS</h3>
+            <div class="col-lg-6">
+                <div id="graph_canvas" style="height: 300px;"></div>
+            </div>
+            <%--<h4 class="sub-header">系统消息</h4>--%>
+            <div class="col-lg-6" id="ratePanel">
+                <%--<img src="holder.js/66x66?theme=social&outline=yes&text=123 \n line breaks \n anywhere">--%>
+            </div>
         </div>
     </div>
-    <div class="col-xs-6 col-sm-4 placeholder">
-        <h5> aa </h5>
+    <div class="row">
+    <div class="col-lg-12">
+        <h4 class="sub-header">调度中心</h4>
 
-        <div>
-            <canvas id="myChart2" height="400"></canvas>
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">调度中任务</div>
+                <div class="panel-body" id="taskListPanelBody">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>剩余任务</th>
+                            <th>队列名</th>
+                            <th>调度策略</th>
+                            <th>备注</th>
+                            <th>最后一次提交</th>
+                        </tr>
+                        </thead>
+                        <tbody id="taskListPanel">
+                        </tbody>
+                    </table>
+                    <span id="expireTasks"></span>
+                </div>
+            </div>
         </div>
+
+        <div class="col-lg-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">集群</div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>hostname</th>
+                            <th>model</th>
+                            <th>tick</th>
+                        </tr>
+                        </thead>
+                        <tbody id="nodeMapPanel">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">Executor</div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <%--<th>tick</th>--%>
+                        </tr>
+                        </thead>
+                        <tbody id="executorMapPanel">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-warning">
+                <div class="panel-heading">已完成调度</div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <%--<th>tick</th>--%>
+                        </tr>
+                        </thead>
+                        <tbody id="expireTaskPanel">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <div class="col-xs-6 col-sm-4 placeholder">
-        <h5> aa </h5>
-
-        <div>
-            <canvas id="myChart3" height="400"></canvas>
-        </div>
     </div>
-    <div class="col-xs-6 col-sm-4 placeholder">
-        <h5> aa </h5>
-
-        <div>
-            <canvas id="myChart4" height="400"></canvas>
-        </div>
-    </div>--%>
 </div>
-
-<h2 class="sub-header">Tasks Analysis</h2>
-
-<div class="table-responsive">
-    <table class="table table-striped" id="flexible-task">
-        <thead>
-        <tr>
-            <th>批次</th>
-            <%--<th>描述</th>--%>
-            <th>积压数</th>
-            <th>提交数</th>
-            <th>实时生产速率</th>
-            <th>实时消费速率</th>
-            <th>开始时间</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${focusedTaskData}" var="task">
-
-            <tr>
-                <td>${task.id}</td>
-                <%--<td>${task.desc}</td>--%>
-                <td>${task.remain}</td>
-                <td>${task.total}</td>
-                <td>${task.produceRate}/s</td>
-                <td>${task.consumeRate}/s</td>
-                <td>${task.createTime}</td>
-            </tr>
-        </c:forEach>
-        <c:forEach items="${firstFlexibleTaskData}" var="task">
-
-            <tr>
-                <td>${task.id}</td>
-                <%--<td>${task.desc}</td>--%>
-                <td>${task.remain}</td>
-                <td>${task.total}</td>
-                <td>${task.produceRate}/s</td>
-                <td>${task.consumeRate}/s</td>
-                <td>${task.createTime}</td>
-            </tr>
-        </c:forEach>
-        <c:forEach items="${secondFlexibleTaskBeanSet}" var="task">
-            <tr>
-                <td>${task.id}</td>
-                <%--<td>${task.desc}</td>--%>
-                <td>${task.remain}</td>
-                <td>${task.total}</td>
-                <td>${task.produceRate}/s</td>
-                <td>${task.consumeRate}/s</td>
-                <td>${task.createTime}</td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
-</div>
-<data value="" style="display: none" id="clusterMap">${clusterMap}</data>
-<data value="" style="display: none" id="currentCluster">${currentCluster}</data>
-<%--<div class="col-xs-12"><data value="" style="" id="runningInfo">${runningInfo}</data></div>--%>
-<script src="/js/index-graph.js"></script>
-<script>
-    // load left nav menu
-    $(function () {
-        var clusterMap = JSON.parse($("#clusterMap").html());
-        for (var key in clusterMap) {
-            var leftNav = $("#left-nav");
-            var li = $("<li>").attr("id", "currentCluster" + key);
-            var a = $("<a>").html(key).attr("href", "?currentCluster=" + key);
-            $(li).append(a);
-            $(leftNav).append($(li));
-            console.log("属性：" + key + ",值：" + clusterMap[key]);
-        }
-
-        var currentCluster = $("#currentCluster").html();
-
-        $("#currentCluster" + currentCluster).attr("class", "active");
-    });
-
-    // timing refresh page
-    $(function () {
-        function refresh() {
-            window.location.reload();
-        }
-
-        setInterval(refresh, ${refresh} * 1000
-        )
-        ;
-
-    });
-
-</script>
-
-<jsp:include page="../../../../template/pageFooter.jsp"></jsp:include>
+<script src="/js/page/index.js"></script>
+<jsp:include page="../../../../template/myModal.jsp"></jsp:include>
+<jsp:include page="../../../../template/pageFooter02.jsp"></jsp:include>
 
