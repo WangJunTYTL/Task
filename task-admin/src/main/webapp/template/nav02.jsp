@@ -17,7 +17,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="index.html">Task Dashboard v2.0</a>
+        <a class="navbar-brand" href="index.html">Task Dashboard v2.6</a>
     </div>
     <!-- /.navbar-header -->
 
@@ -257,7 +257,7 @@
                             <a href="/static/page/taskmonitor.html" target="_blank">部署监控</a>
                         </li>
                         <li>
-                            <a href="/static/page/taskmonitor.html" target="_blank">调度策略</a>
+                            <a href="/static/page/dispatch.html" target="_blank">调度策略</a>
                         </li>
                         <li>
                             <a href="/static/page/taskmonitor.html" target="_blank">扩展性</a>

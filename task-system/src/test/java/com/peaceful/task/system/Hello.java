@@ -8,7 +8,7 @@ import com.peaceful.task.context.annotation.Task;
  */
 public class Hello {
 
-    @Task("Test06")
+    @Task("Test07")
     public void say(String msg) throws InterruptedException {
         Thread.sleep(1000);
         System.out.println(msg);
