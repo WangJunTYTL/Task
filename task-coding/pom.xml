@@ -36,7 +36,7 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.edaijia</groupId>
+            <groupId>com.peaceful</groupId>
             <artifactId>task-context</artifactId>
             <version>2.6-SNAPSHOT</version>
         </dependency>

@@ -33,24 +33,6 @@
         <level value="error"/>
     </logger>
 
-    <logger name="cn.edaijia.service.redis.cglib.UsageTrackingImp" additivity="false">
-        <level value="error"/>
-    </logger>
-
-    <logger name="cn.edaijia.task.executor.dispatch.actor" additivity="false">
-        <level value="debug"></level>
-        <appender-ref ref="AKKA_STDOUT"></appender-ref>
-    </logger>
-
-    <logger name="cn.edaijia.task.executor.impl.actor.WorkerActor" additivity="false">
-        <level value="debug"></level>
-        <appender-ref ref="AKKA_STDOUT"></appender-ref>
-    </logger>
-
-    <logger name="cn.edaijia.task.executor.impl.actor.TaskRouterActor" additivity="false">
-        <level value="debug"></level>
-        <appender-ref ref="AKKA_STDOUT"></appender-ref>
-    </logger>
 
 
     <logger name="com.peaceful.common" additivity="false">
