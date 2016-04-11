@@ -240,9 +240,9 @@ $(function () {
                         parseData = JSON.parse(data);
                     } catch (error) {
                         parseData = new Object();
-                        parseData['timeAxis'] = null;
-                        parseData['produceAxis'] = null;
-                        parseData['consumeAxis'] = null;
+                        parseData['timeAxis'] = [''];
+                        parseData['produceAxis'] = [''];
+                        parseData['consumeAxis'] = [''];
                     }
                     var timeAxis = new Array();
                     if (parseData['timeAxis'] != null) {

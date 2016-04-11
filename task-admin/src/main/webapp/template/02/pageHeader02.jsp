@@ -14,7 +14,7 @@
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Task Console</title>
+    <title>Task Dashboard V2.6</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap-3.5.css" rel="stylesheet">
@@ -23,11 +23,16 @@
     <script src="/js/bootstrap-3.5.js"></script>
     <script src="/js/helper/Map.js"></script>
 
-    <!-- Custom styles for this template -->
-    <link href="/js/template02/metisMenu.css" rel="stylesheet">
-    <script src="/js/template02/metisMenu.js"></script>
+    <%--图标--%>
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <%--左侧导航栏--%>
+    <link rel="stylesheet" href="/css/metisMenu.min.css">
+    <script src="/js/metisMenu.min.js"></script>
+
+    <link rel="stylesheet" href="/static/template02/sb-admin-2.css">
 
 
 </head>
-
 <body>
+<div id="wrapper">

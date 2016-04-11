@@ -9,8 +9,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 
-<jsp:include page="../../../../template/pageHeader02.jsp"></jsp:include>
-<jsp:include page="../../../../template/nav02.jsp"></jsp:include>
+<jsp:include page="../../../../template/02/pageHeader02.jsp"></jsp:include>
+<jsp:include page="../../../../template/02/nav02.jsp"></jsp:include>
 <%--<script src="//cdn.bootcss.com/holder/2.8.2/holder.js"></script>--%>
 <script src="/js/holder.js"></script>
 <%--<script src="/js/Chart-1.0.2.js"></script>--%>
@@ -112,5 +112,5 @@
 </div>
 <script src="/js/page/index.js"></script>
 <jsp:include page="../../../../template/myModal.jsp"></jsp:include>
-<jsp:include page="../../../../template/pageFooter02.jsp"></jsp:include>
+<jsp:include page="../../../../template/02/pageFooter02.jsp"></jsp:include>
 

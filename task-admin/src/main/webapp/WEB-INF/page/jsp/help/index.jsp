@@ -6,44 +6,80 @@
   To change this weixin.template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<jsp:include page="../../../../template/pageHeader02.jsp"></jsp:include>
-<jsp:include page="../../../../template/nav02.jsp"></jsp:include>
-<!--语法高亮-->
-<link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
-<script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-<div id="page-wrapper">
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Url Search</title>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap-3.5.css" rel="stylesheet">
+    <script src="/js/jquery-1.9.1.js"></script>
+    <script src="/js/bootstrap-3.5.js"></script>
+</head>
+<style>
+    body {
+        background: url("/image/header.jpg");
+        /*background-position: center;*/
+    }
 
+    nav {
+        opacity: 0.5;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+</style>
+<body>
+<nav class="navbar navbar-default">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">Task是什么</h1>
-                <div>
-                    <p>
-                        Task是一个轻量级分布式任务计算组件,让你通过一行代码就可以把你本有的方法变成可分布式执行的方法.正如下面所示
-                    </p>
-
-                        <pre>
-                        <code>
-public class Hello {
-
-@Task("Test16")
-public void say(String msg) throws InterruptedException {
-Thread.sleep(1000);
-System.out.println(msg);
-}
-}
-                        </code>
-                        </pre>
-                </div>
-
-            </div>
-            <!-- /.col-lg-12 -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+                <img src="/image/123.png" alt="Brand" height="28px">
+            </a>
         </div>
-        <!-- /.row -->
     </div>
-    <!-- /.container-fluid -->
-
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <a href="/">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">一切从这里开始</div>
+                    <div class="panel-body">
+                        让一切变的更简单,这里是属于你的<img src="/image/123.png" height="20px">,点击开始加入你的网址
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="/">
+                <div class="panel panel-info">
+                    <div class="panel-heading">Task监控</div>
+                    <div class="panel-body">
+                        Task是一个轻量级的分布式任务计算系统
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="#">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Panel title</h3>
+                    </div>
+                    <div class="panel-body">
+                        Panel content
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </div>
-<jsp:include page="../../../../template/pageFooter02.jsp"></jsp:include>
-
+</body>
+</html>

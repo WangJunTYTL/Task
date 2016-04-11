@@ -21,7 +21,7 @@ public class SetUp {
     public static void main(String[] args) throws InterruptedException {
         // 获取Hello对象的代理实例
         Hello hello = Task.registerASyncClass(Hello.class);
-        // 此时say方法会被立即返回且是被集群中的某个节点给调用了
+        // 此时say方法会被立即返回且是被集群中的某个节点给调用执行
         hello.say("hello world");
     }
 }

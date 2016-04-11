@@ -89,43 +89,47 @@ public class RedisControllerApi {
 
         @Override
         public void run() {
-            for (String name : Conf.getConf().clusterList) {
-                Map<String, String> produce = Redis.cmd().hgetAll("TASK-" + name + "-PRODUCE-COUNT-MONITOR");
-                Map<String, String> consume = Redis.cmd().hgetAll("TASK-" + name + "-CONSUME-COUNT-MONITOR");
-                long produceTotal = 0;
-                long consumeTotal = 0;
-                GraphData graphData = null;
-                if (COUNT_GRAPH.containsKey(name)) {
-                    graphData = COUNT_GRAPH.get(name);
-                } else {
-                    graphData = new GraphData("TOTAL", COUNT_SIZE);
-                    COUNT_GRAPH.put(name, graphData);
-                }
-                for (String key : produce.keySet()) {
-                    Long newCount = Long.valueOf(produce.get(key));
-                    if (latestTaskProduceCount.containsKey(key)) {
-                        long nowCount = (newCount - latestTaskProduceCount.get(key));
-                        produceTotal += nowCount;
-                        taskProduceRate.put(key, String.valueOf(nowCount / 5));
+            try {
+                for (String name : Conf.getConf().clusterList) {
+                    Map<String, String> produce = Redis.cmd().hgetAll("TASK-" + name + "-PRODUCE-COUNT-MONITOR");
+                    Map<String, String> consume = Redis.cmd().hgetAll("TASK-" + name + "-CONSUME-COUNT-MONITOR");
+                    long produceTotal = 0;
+                    long consumeTotal = 0;
+                    GraphData graphData = null;
+                    if (COUNT_GRAPH.containsKey(name)) {
+                        graphData = COUNT_GRAPH.get(name);
+                    } else {
+                        graphData = new GraphData("TOTAL", COUNT_SIZE);
+                        COUNT_GRAPH.put(name, graphData);
                     }
-                    latestTaskProduceCount.put(key, newCount);
-                }
+                    for (String key : produce.keySet()) {
+                        Long newCount = Long.valueOf(produce.get(key));
+                        if (latestTaskProduceCount.containsKey(key)) {
+                            long nowCount = (newCount - latestTaskProduceCount.get(key));
+                            produceTotal += nowCount;
+                            taskProduceRate.put(key, String.valueOf(nowCount / 5));
+                        }
+                        latestTaskProduceCount.put(key, newCount);
+                    }
 
-                for (String key : consume.keySet()) {
-                    Long newCount = Long.valueOf(consume.get(key));
-                    if (latestTaskConsumeCount.containsKey(key)) {
-                        long nowCount = (newCount - latestTaskConsumeCount.get(key));
-                        consumeTotal += nowCount;
-                        taskConsumeRate.put(key, String.valueOf(nowCount / 5));
+                    for (String key : consume.keySet()) {
+                        Long newCount = Long.valueOf(consume.get(key));
+                        if (latestTaskConsumeCount.containsKey(key)) {
+                            long nowCount = (newCount - latestTaskConsumeCount.get(key));
+                            consumeTotal += nowCount;
+                            taskConsumeRate.put(key, String.valueOf(nowCount / 5));
+                        }
+                        latestTaskConsumeCount.put(key, newCount);
                     }
-                    latestTaskConsumeCount.put(key, newCount);
+                    graphData.timeAxis.push(System.currentTimeMillis());
+                    graphData.produceAxis.push(produceTotal / rate);
+                    graphData.consumeAxis.push(consumeTotal / rate);
                 }
-                graphData.timeAxis.push(System.currentTimeMillis());
-                graphData.produceAxis.push(produceTotal / rate);
-                graphData.consumeAxis.push(consumeTotal / rate);
+            } catch (Exception e) {
+                // ignore
             }
         }
+
+
     }
-
-
 }

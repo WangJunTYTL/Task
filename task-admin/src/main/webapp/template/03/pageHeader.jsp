@@ -13,14 +13,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="WangJun">
     <title>Task Console</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap-3.5.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/css/dashboard.css" rel="stylesheet">
+    <link href="/static/template03/simple-sidebar.css" rel="stylesheet">
 
     <script src="/js/jquery-1.9.1.js"></script>
     <script src="/js/bootstrap-3.5.js"></script>
@@ -29,5 +29,3 @@
 </head>
 
 <body>
-
-<div id="wrapper">

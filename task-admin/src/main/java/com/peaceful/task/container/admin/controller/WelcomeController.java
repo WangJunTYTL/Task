@@ -30,6 +30,22 @@ public class WelcomeController {
         return "welcome/index";
     }
 
+    @RequestMapping(value = "01")
+    public String template01(HttpServletRequest request) {
+        return "welcome/template01";
+    }
+
+    @RequestMapping(value = "02")
+    public String template02(HttpServletRequest request) {
+        return "welcome/template02";
+    }
+
+    @RequestMapping(value = "03")
+    public String template03(HttpServletRequest request) {
+        return "welcome/template03";
+    }
+
+
     @RequestMapping(value = {"help"})
     public String help(HttpServletRequest request) {
         String name = (String) request.getAttribute("currentCluster");
