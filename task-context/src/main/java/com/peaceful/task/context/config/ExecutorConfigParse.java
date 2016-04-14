@@ -20,7 +20,7 @@ public class ExecutorConfigParse implements Command {
     public boolean execute(Context context) throws Exception {
         TaskConfigOps taskConfigOps = (TaskConfigOps) SimpleTaskContext.CONTEXT.get(ContextConstant.CONFIG);
         Config config = (Config) context.get("config");
-        List<? extends ConfigObject> executors = config.getObjectList("task-system.executor");
+        List<? extends ConfigObject> executors = config.getObjectList("task.executor");
         for (ConfigObject object : executors) {
             Executor executorNode = new Executor();
             executorNode.name = object.get("name").unwrapped().toString();

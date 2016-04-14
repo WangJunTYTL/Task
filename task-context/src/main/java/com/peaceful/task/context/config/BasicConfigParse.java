@@ -17,9 +17,9 @@ public class BasicConfigParse implements Command {
     public boolean execute(Context context) throws Exception {
         TaskConfigOps taskConfigOps = (TaskConfigOps) SimpleTaskContext.CONTEXT.get(ContextConstant.CONFIG);
         Config config = (Config) context.get("config");
-        taskConfigOps.name = config.getString("task-system.name");
-        taskConfigOps.bootMode = config.getString("task-system.boot-mode");
-        taskConfigOps.developMode = config.getString("task-system.develop-mode");
+        taskConfigOps.name = config.getString("task.name");
+        taskConfigOps.bootMode = config.getString("task.boot-mode");
+        taskConfigOps.developMode = config.getString("task.develop-mode");
         return CONTINUE_PROCESSING;
     }
 }

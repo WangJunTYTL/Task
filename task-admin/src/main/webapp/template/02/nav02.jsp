@@ -254,7 +254,13 @@
                             <a href="/static/page/quickstart.html" target="_blank">快速上手</a>
                         </li>
                         <li>
+                            <a href="/static/page/taskconf.html" target="_blank">Task配置</a>
+                        </li>
+                        <li>
                             <a href="/static/page/taskmonitor.html" target="_blank">部署监控</a>
+                        </li>
+                        <li>
+                            <a href="/static/page/taskproduce.html" target="_blank">任务生产</a>
                         </li>
                         <li>
                             <a href="/static/page/dispatch.html" target="_blank">调度策略</a>

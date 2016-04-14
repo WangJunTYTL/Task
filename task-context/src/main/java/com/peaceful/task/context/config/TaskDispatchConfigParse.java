@@ -19,7 +19,7 @@ public class TaskDispatchConfigParse implements Command {
     public boolean execute(Context context) throws Exception {
         TaskConfigOps taskConfigOps = (TaskConfigOps) SimpleTaskContext.CONTEXT.get(ContextConstant.CONFIG);
         Config config = (Config) context.get("config");
-        taskConfigOps.dispatchTick = config.getDuration("task-system.dispatch-tick", TimeUnit.MILLISECONDS);
+        taskConfigOps.dispatchTick = config.getDuration("task.dispatch-tick", TimeUnit.MILLISECONDS);
         return CONTINUE_PROCESSING;
     }
 }
