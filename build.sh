@@ -10,7 +10,7 @@
 #
 # 如果你的开发平台是window，需要手动执行以下步骤
 #   1. git clone https://github.com/WangJunTYTL/peaceful-basic-platform.git
-#   2. 进入peaceful-basic-platform 目录 ，执行 mvn install  -Dmaven.test.skip=true
+#   2. 进入peaceful-basic-platform 目录 ，先执行 mvn clean  -f peaceful-parent/pom.xml install  -Dmaven.test.skip=true 后执行 mvn install  -Dmaven.test.skip=true
 #   3. git clone https://github.com/WangJunTYTL/redismanage.git
 #   4. 进入redismanage 目录 ，执行 mvn install  -Dmaven.test.skip=true
 #   5. 进入task目录，执行 mvn install  -Dmaven.test.skip=true
