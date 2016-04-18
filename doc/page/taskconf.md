@@ -11,7 +11,7 @@ task {
 
   // 启动模式,如果是client模式,只可以提交任务,不会调度任务执行,server模式可提交任务,也可以调度任务执行
   boot-mode = "server"
-
+  // test[product] 
   develop-mode = "test"
 
   // 任务执行器
