@@ -40,7 +40,7 @@ public class ExecutorDispatcherActor extends UntypedActor {
         executors = new ArrayList<String>();
         for (Executor executor : executorConfigOps.executorNodeList) {
             getContext().actorOf(Props.create(ExecutorActor.class, executor.Class.newInstance()), executor.name);
-            log.info("Started {} xecute  OK...", executor.name);
+            log.info("Started {} executor  OK...", executor.name);
             executors.add(executor.name);
         }
         super.preStart();

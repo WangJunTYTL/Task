@@ -23,7 +23,7 @@ public class MapParse implements Parse {
         InvokeContext invokeContext = (InvokeContext) context;
         if (invokeContext.parameterTypes[invokeContext.index].equals(Map.class)) {
             JSONObject object = (JSONObject) invokeContext.args[invokeContext.index];
-            invokeContext.newArgs[invokeContext.index] = JSON.parseObject(object.toJSONString(), invokeContext.parameterTypes[invokeContext.index]);
+            invokeContext.newArgs[invokeContext.index] = JSON.parseObject(object.toJSONString(), invokeContext.types[invokeContext.index]);
             invokeContext.index++;
             return PROCESSING_COMPLETE;
         }

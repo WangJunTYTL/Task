@@ -39,7 +39,7 @@ public class TypeAdapter {
         InvokeContext invokeContext = (InvokeContext) context;
         for (int i = 0; i < invokeContext.length; i++) {
             if (parseChain.execute(invokeContext)) {
-                logger.debug("{} param[{}] {} {}", invokeContext.aClass.getSimpleName()+"."+invokeContext.methodName,i,invokeContext.getCurrentParamType().getName(), invokeContext.getCurrentArg());
+                logger.debug("{} param[{}] {} {}", invokeContext.aClass.getSimpleName()+"."+invokeContext.methodName,i,invokeContext.getCurrentParamType(), invokeContext.getCurrentArg());
             } else {
                 throw new NotSupportParamType(invokeContext.getCurrentParamType());
             }

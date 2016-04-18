@@ -2,7 +2,23 @@ $(function () {
 
     var systemName = $("#currentCluster").html();
     var task_dispatch_map = new Map();
+    var task_rate_map = new Map();
     var cluster_nodes = new Array();
+
+    var load_task_rate_data = function () {
+        $.post("/rate/task", {currentCluster: systemName}, function (data) {
+            var tasks = JSON.parse(data);
+            $("#ratePanel").html('');
+            var flag = false;
+            for (var i = 0; i < tasks.length; i++) {
+                task_rate_map.put(tasks[i]['task'],tasks[i]);
+            }
+        });
+    }
+
+    load_task_rate_data();
+
+
     //加载任务面板
     var load_task_panel = function () {
         $.post("/taskmap", {currentCluster: systemName}, function (data) {
@@ -21,39 +37,72 @@ $(function () {
                 }
             }
             if (dispatchTasks.length == 0) {
-                $("#taskListPanelBody").html('').append("<div class='alert'>当前任务队列为空,无可被调度任务,已调度 <a>" + expireTasks.length + "</a> 个任务</div>")
+                $("#taskListPanel").html('').append("<div class='alert'>当前任务队列为空,无可被调度任务,已调度 <a>" + expireTasks.length + "</a> 个任务</div>")
             }
             for (var i = 0; i < dispatchTasks.length; i++) {
                 var task = dispatchTasks[i];
                 var tr = $("<tr>");
-                tr.append($("<td>").html(task['reserve']));
                 if (task["state"] == "isLock") {
                     tr.append($("<td>").html("<a href='javascript:void(0)' class='text-danger updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
                 } else {
                     tr.append($("<td>").html("<a href='javascript:void(0)' class='text-info updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
                 }
+                // alert(task_rate_map.size());
+                var rate = task_rate_map.get(task['name']);
+                tr.append($("<td>").html(rate['produce']+"/s,"+rate['consume']+"/s,【"+task['reserve']+'】'));
+                if (task['reserve']>687){
+                    tr.attr("class","warning");
+                }
                 if (task["state"] == "OK") {
                     tr.append($("<td>").html('允许所有节点调度'));
                 } else if (task["state"] == "isLock") {
-                    tr.append($("<td class='text-danger'>").html("不允许被任何节点调度"));
+                    tr.append($("<td>").html("不允许被任何节点调度")).attr("class", "danger");
                 } else {
-                    tr.append($("<td class='text-warning'>").html("只允许被[" + task['state'] + "]调度"));
+                    tr.append($("<td>").html("只允许被[" + task['state'] + "]调度")).attr("class", "warning");
                 }
                 tr.append($("<td>").html(task['desc']));
                 tr.append($("<td>").html(formatDate(task['updateTime'], 'full')));
                 $("#taskListPanel").append(tr);
             }
-            // todo 过期任务
-            $("#expireTaskPanel").html('')
-            for (var i = 0; i < expireTasks.length; i++) {
-                var tr = $("<tr>");
-                tr.append($("<td>").append(expireTasks[i]['name']))
-                $("#expireTaskPanel").append(tr);
-            }
+            $(document).on("click","#expireTaskMenu",function () {
+                for (var i = 0; i < expireTasks.length; i++) {
+                    var task = expireTasks[i];
+                    var tr = $("<tr>");
+                    if (task["state"] == "isLock") {
+                        tr.append($("<td>").html("<a href='javascript:void(0)' class='text-danger updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
+                    } else {
+                        tr.append($("<td>").html("<a href='javascript:void(0)' class='text-info updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
+                    }
+                    // alert(task_rate_map.size());
+                    var rate = task_rate_map.get(task['name']);
+                    if (rate == null){
+                        tr.append($("<td>").html("已完成调度"))
+                    }else {
+                        tr.append($("<td>").html(rate['produce'] + "/s," + rate['consume'] + "/s,【" + task['reserve'] + '】'));
+                    }
+                    if (task['reserve']>687){
+                        tr.attr("class","warning");
+                    }
+                    if (task["state"] == "OK") {
+                        tr.append($("<td>").html('允许所有节点调度'));
+                    } else if (task["state"] == "isLock") {
+                        tr.append($("<td>").html("不允许被任何节点调度")).attr("class", "danger");
+                    } else {
+                        tr.append($("<td>").html("只允许被[" + task['state'] + "]调度")).attr("class", "warning");
+                    }
+                    tr.append($("<td>").html(task['desc']));
+                    tr.append($("<td>").html(formatDate(task['updateTime'], 'full')));
+                    $("#taskListPanel").append(tr);
+                }
+                $(this).remove();
+            });
+            
         });
     }
 
     load_task_panel();
+    
+
 
 
     //加载集群节点面板
@@ -76,6 +125,7 @@ $(function () {
                 } else {
                     tr.append("<td> <a class='text-danger updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
                     tr.append($('<td>client</td>'));
+                    tr.attr("class","danger");
                 }
                 tr.append($("<td>").html(formatDate(node['updateTime'])));
                 $("#nodeMapPanel").append(tr);
@@ -252,7 +302,7 @@ $(function () {
                     }
                     var option = {
                         title: {
-                            subtext: '生产消费速率单位/秒'
+                            subtext: '单位/秒'
                         },
                         tooltip: {
                             trigger: 'axis'
@@ -330,49 +380,12 @@ $(function () {
 
     load_total_rate_panel();
 
-    var load_task_rate_panel = function () {
-        $.post("/rate/task", {currentCluster: systemName}, function (data) {
-            var tasks = JSON.parse(data);
-            $("#ratePanel").html('');
-            var flag = false;
-            for (var i = 0; i < tasks.length; i++) {
-                var task = task_dispatch_map.get(tasks[i]['task']);
-                if (task == null){
-                    continue;
-                }
-                if (tasks[i]['produce'] != 0 || tasks[i]['consume'] != 0 || task != null) {
-                    flag = true;
-                    if (task['state'] == "isLock") {
-                        var img = $("<img>").attr("data-src", "holder.js/166x66" + '?theme=gray&outline=yes&lineWrap=0.5&text=produce:' + tasks[i]['produce'] + '/s \\n consume:' + tasks[i]['consume'] + '/s \\n ' + tasks[i]['task']);
-                    } else if (task['reserve'] > 876) {
-                        var img = $("<img>").attr("data-src", "holder.js/166x66" + '?theme=industrial&outline=yes&lineWrap=0.5&text=produce:' + tasks[i]['produce'] + '/s \\n consume:' + tasks[i]['consume'] + '/s \\n ' + tasks[i]['task'] + "(" + task['reserve'] + ")");
-                    } else {
-                        var img = $("<img>").attr("data-src", "holder.js/166x66" + '?theme=vine&outline=yes&lineWrap=0.5&text=produce:' + tasks[i]['produce'] + '/s \\n consume:' + tasks[i]['consume'] + '/s \\n ' + tasks[i]['task']);
-                    }
-                    $("#ratePanel").append((img));
-                    Holder.run({
-                        images: img.get(0)
-                    });
-                }
-            }
-            if (!flag) {
-                $("#ratePanel").html('');
-                if (cluster_nodes.length == 0){
-                    $("#ratePanel").append('<p class="alert alert-danger">请注意:集群可能不存在或在集群中午存活节点</p>');
-                }
-                $("#ratePanel").append('<p class="alert alert-warning">暂无任务生成与消费</p>');
-            }
-        });
-    }
-
-    load_task_rate_panel();
-
 
     var refresh = function () {
         load_total_rate_panel();
+        load_task_rate_data();
         load_node_panel();
         load_task_panel();
-        load_task_rate_panel();
     }
 
     setInterval(refresh, 60000);

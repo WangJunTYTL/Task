@@ -5,6 +5,9 @@ import com.peaceful.common.util.chain.BaseContext;
 import com.peaceful.common.util.chain.Context;
 import com.peaceful.task.context.coding.TU;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+
 /**
  * 调用信息上下文，每个任务单元都应该一个独立的调用上下文
  * 该类不是线程安全，为了保证安全，需要为每个任务单元创建一个上下文
@@ -27,6 +30,9 @@ public class InvokeContext extends BaseContext implements Context {
     // 参数类型列表
     public Class[] parameterTypes;
 
+    // 获取实际参数类型，针对泛型问题进行解决
+    public Type[] types;
+
     // 调用实际传参
     public Object[] args;
 
@@ -46,8 +52,10 @@ public class InvokeContext extends BaseContext implements Context {
     // 任务提交时间
     public long submitTime;
 
+    public Method method;
+
     // 利用Task2任务单元构造调用上下文信息
-    public InvokeContext(TU task2) {
+    public InvokeContext(TU task2) throws NoSuchMethodException {
         id = task2.id;
         queueName = task2.queueName;
         aClass = task2.aclass;
@@ -59,10 +67,12 @@ public class InvokeContext extends BaseContext implements Context {
         newArgs = new Object[length];
         index = 0;
         submitTime = task2.getSubmitTime();
+        method = aClass.getMethod(methodName, parameterTypes);
+        types = method.getGenericParameterTypes();
     }
 
-    public Class getCurrentParamType() {
-        return parameterTypes[index - 1];
+    public Type getCurrentParamType() {
+        return types[index - 1];
     }
 
     public Object getCurrentArg() {

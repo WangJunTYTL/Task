@@ -46,15 +46,6 @@ public class TaskCodingImpl implements TaskCoding {
             }else{
                 task.setQueueName(zClass.getSimpleName()+"."+method.getName());
             }
-       /*     // 校验queue 是否存在
-            if (taskConfigOps.focusedTaskConfigOps.queueList.contains(task.queueName)) {
-                // pass
-            } else if (taskConfigOps.focusedTaskConfigOps.autoCreateQueue) {
-                // 新增队列加入到注册中心
-                serviceCenter.addFlexibleTask(task.queueName);
-            } else {
-                throw new RuntimeException(task.queueName + " queue not has not been configured in focused-task.queueList and focused-task.autoCreateQueue is false!");
-            }*/
             task.setId(IdGenerate.getNext(task.queueName));
             return task;
         }
@@ -79,8 +70,9 @@ public class TaskCodingImpl implements TaskCoding {
             logger.error("can't decoding the {} ,may be the task matched class object not in the jvm", taskJson);
             return null;
         }
-        InvokeContext invokeContext = new InvokeContext(task);
+
         try {
+            InvokeContext invokeContext = new InvokeContext(task);
             TUR taskUnit = magic.go(typeAdapter.execute(invokeContext));
             // 后续处理链
 //            taskDecodingChain.execute(context);

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * 每次方法的调用都是一个Task的生成,通过{@link TaskCoding#encoding(Class, Method, Object[])}可以把
