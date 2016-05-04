@@ -4,7 +4,7 @@ package com.peaceful.task.context.dispatch;
  * @author WangJun
  * @version 1.0 16/3/30
  */
-public class Task {
+public class TaskUnit {
 
     public String name;
     public String desc;
@@ -14,11 +14,11 @@ public class Task {
     public long updateTime;
     public boolean expire;
 
-    public Task() {
+    public TaskUnit() {
 
     }
 
-    public Task(String name) {
+    public TaskUnit(String name) {
         this.name = name;
         state = "OK";
     }
@@ -27,8 +27,8 @@ public class Task {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Task)) return false;
-        Task task = (Task) o;
+        if (!(o instanceof TaskUnit)) return false;
+        TaskUnit task = (TaskUnit) o;
         return name != null ? name.equals(task.name) : task.name == null;
     }
 

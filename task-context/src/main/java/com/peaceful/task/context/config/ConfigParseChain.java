@@ -18,8 +18,8 @@ public class ConfigParseChain extends BaseChain {
         return Single.chain;
     }
 
-    public static class Single {
-        public static ConfigParseChain chain = new ConfigParseChain();
+    public final static class Single {
+        public  static ConfigParseChain chain = new ConfigParseChain();
     }
 
     static {
@@ -28,5 +28,6 @@ public class ConfigParseChain extends BaseChain {
         Single.chain.addCommand(new TaskDispatchConfigParse());
         Single.chain.addCommand(new ExecutorConfigParse());
     }
+
 
 }

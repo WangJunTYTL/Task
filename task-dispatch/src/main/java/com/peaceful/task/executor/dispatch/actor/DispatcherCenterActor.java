@@ -26,7 +26,7 @@ import java.util.List;
  * @author <a href="mailto:wangjuntytl@163.com">WangJun</a>
  * @version 1.0 16/1/12
  */
-public class ExecutorDispatcherActor extends UntypedActor {
+public class DispatcherCenterActor extends UntypedActor {
 
     TaskConfigOps taskConfigOps = (TaskConfigOps) SimpleTaskContext.CONTEXT.get(ContextConstant.CONFIG);
     List<String> executors;
@@ -39,7 +39,7 @@ public class ExecutorDispatcherActor extends UntypedActor {
         TaskConfigOps.ExecutorConfigOps executorConfigOps = taskConfigOps.executorConfigOps;
         executors = new ArrayList<String>();
         for (Executor executor : executorConfigOps.executorNodeList) {
-            getContext().actorOf(Props.create(ExecutorActor.class, executor.Class.newInstance()), executor.name);
+            getContext().actorOf(Props.create(ExecutorSupervisionActor.class, executor.Class.newInstance()), executor.name);
             log.info("Started {} executor  OK...", executor.name);
             executors.add(executor.name);
         }
@@ -67,10 +67,12 @@ public class ExecutorDispatcherActor extends UntypedActor {
         } else if (message instanceof TaskCompleted) {
             TaskCompleted completed = (TaskCompleted) message;
             Object[] params = new Object[]{completed.id, completed.executor, completed.startTime - completed.submitTime, completed.startTime - completed.createTime, completed.completeTime - completed.startTime};
-            log.info("completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
             // 如果本地的taskUnit对象已经缓存时间超过1s,停止向executor主动推送task unit,这样可以让已经缓存的task unit 尽快执行,因为设计这个系统的初衷并不想把这些task unit缓存到本地
             if (completed.startTime - completed.createTime > 1000) {
+                log.warning("SLOW TASK: completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
                 return;
+            }else {
+                log.info("completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
             }
             TUR taskUnit = TaskUtils.next(completed.queue);
             if (taskUnit != null) {

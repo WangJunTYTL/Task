@@ -12,23 +12,28 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Task运行期的信息是注册到redis中，这里主要是从redis中获取信息
+ *
  * @author WangJun
  * @version 1.0 16/3/31
  */
 public class RedisControllerApi {
 
-    private static final ScheduledExecutorService SCHEDULE = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService SCHEDULE = Executors.newScheduledThreadPool(2);
+    // 任务生产总数
     private static final Map<String, Long> latestTaskProduceCount = new HashMap<String, Long>();
+    // 任务消费总数
     private static final Map<String, Long> latestTaskConsumeCount = new HashMap<String, Long>();
-    private static final int rate = 5;
-    private static final int COUNT_SIZE = 68;
+    // 从redis中获取信息的频率
+    private static final int rate = 26;
+    private static final int COUNT_SIZE = 168;
     private static final Map<String, GraphData> COUNT_GRAPH = new HashMap<String, GraphData>();
     private static Map<String, String> taskProduceRate = new HashMap<String, String>();
     private static Map<String, String> taskConsumeRate = new HashMap<String, String>();
 
 
     static {
-        SCHEDULE.scheduleAtFixedRate(new CycleAnalysis(), rate, rate, TimeUnit.SECONDS);
+        SCHEDULE.scheduleAtFixedRate(new CycleAnalysis(), 0, rate, TimeUnit.SECONDS);
     }
 
 
@@ -107,7 +112,7 @@ public class RedisControllerApi {
                         if (latestTaskProduceCount.containsKey(key)) {
                             long nowCount = (newCount - latestTaskProduceCount.get(key));
                             produceTotal += nowCount;
-                            taskProduceRate.put(key, String.valueOf(nowCount / 5));
+                            taskProduceRate.put(key, String.valueOf(nowCount / rate));
                         }
                         latestTaskProduceCount.put(key, newCount);
                     }
@@ -117,7 +122,7 @@ public class RedisControllerApi {
                         if (latestTaskConsumeCount.containsKey(key)) {
                             long nowCount = (newCount - latestTaskConsumeCount.get(key));
                             consumeTotal += nowCount;
-                            taskConsumeRate.put(key, String.valueOf(nowCount / 5));
+                            taskConsumeRate.put(key, String.valueOf(nowCount / rate));
                         }
                         latestTaskConsumeCount.put(key, newCount);
                     }

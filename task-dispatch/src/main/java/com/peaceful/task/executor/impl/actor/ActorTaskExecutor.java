@@ -12,8 +12,8 @@ import com.peaceful.task.context.TaskExecutor;
  */
 public class ActorTaskExecutor implements TaskExecutor {
 
-    ActorSystem actorSystem = (ActorSystem) SimpleTaskContext.CONTEXT.get("actorSystem");
-    ActorSelection router = actorSystem.actorSelection("/user/myroot/public/taskDispatch");
+    private ActorSystem actorSystem = (ActorSystem) SimpleTaskContext.CONTEXT.get("actorSystem");
+    private ActorSelection router = actorSystem.actorSelection("/user/myroot/public/taskDispatch");
 
     @Override
     public void execute(Runnable task) {

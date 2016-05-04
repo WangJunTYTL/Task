@@ -1,7 +1,7 @@
 package com.peaceful.task.context;
 
 import com.peaceful.task.context.config.Executor;
-import com.peaceful.task.context.dispatch.Task;
+import com.peaceful.task.context.dispatch.TaskUnit;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,14 +14,14 @@ public interface TaskController {
 
     List<Executor> EXECUTOR_LIST = new ArrayList<Executor>();
     // 此处必须使用线程安全的集合,因为需要在多线程下操作
-    Map<String, Task> TASK_HISTORY_LIST = new ConcurrentHashMap<String, Task>();
-    Map<String, Task> TASK_LIST = new ConcurrentHashMap<String, Task>();
+    Map<String, TaskUnit> TASK_HISTORY_LIST = new ConcurrentHashMap<String, TaskUnit>();
+    Map<String, TaskUnit> TASK_LIST = new ConcurrentHashMap<String, TaskUnit>();
 
     /**
      * 获取所有的任务
      * @return
      */
-    Collection<Task> findAllTasks();
+    Collection<TaskUnit> findAllTasks();
 
     /**
      * 加入任务
@@ -30,13 +30,13 @@ public interface TaskController {
     void insertTask(String name);
 
 
-    void removeTask(Task task);
+    void removeTask(TaskUnit task);
 
     /**
      *  获取节点可以调度的任务
      * @return
      */
-    Collection<Task> findNeedDispatchTasks();
+    Collection<TaskUnit> findNeedDispatchTasks();
 
     /**
      * 获取所有的

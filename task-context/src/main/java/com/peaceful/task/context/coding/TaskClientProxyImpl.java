@@ -11,6 +11,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.peaceful.common.util.ExceptionUtils;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,22 +39,25 @@ public class TaskClientProxyImpl implements TaskClientProxy {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args)
                     throws Throwable {
+                StopWatch watch = new Slf4JStopWatch();
                 // 调用信息编码
                 TU task02 = SimpleTaskContext.CODING.encoding(tClass, method, args);
                 if (task02 != null) {
-                    //解决FastJson循环引用的问题
-                    SerializerFeature feature = SerializerFeature.DisableCircularReferenceDetect;
-                    task02.setSubmitTime(System.currentTimeMillis());
-                    String cmd = JSON.toJSONString(task02, feature);
                     try {
+                        //解决FastJson循环引用的问题
+                        SerializerFeature feature = SerializerFeature.DisableCircularReferenceDetect;
+                        task02.setSubmitTime(System.currentTimeMillis());
+                        String cmd = JSON.toJSONString(task02, feature);
                         // 提交到队列服务
                         SimpleTaskContext.QUEUE.push("TASK-" + taskConfigOps.name + "-" + task02.queueName, cmd);
                         controller.insertTask(task02.queueName);
                         monitor.produce(task02);
-                        logger.info("submit task {}", task02);
+                        logger.debug("submit task {}", task02);
+                        watch.stop("TASK.PRODUCE");
+                        watch.stop("task."+task02.queueName+".produce");
                     } catch (Exception e) {
-                        logger.info("task queue service error,{}", ExceptionUtils.getStackTrace(e));
-                        throw new RuntimeException("queue service error", e);
+                        logger.error("task submit fail -> {}", ExceptionUtils.getStackTrace(e));
+                        throw new RuntimeException("task submit fail", e);
                     }
                 }
                 return null;

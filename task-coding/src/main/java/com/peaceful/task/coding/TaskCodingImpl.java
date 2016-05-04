@@ -28,9 +28,6 @@ public class TaskCodingImpl implements TaskCoding {
     Logger logger = LoggerFactory.getLogger(TaskCodingImpl.class);
     TypeAdapter typeAdapter = new TypeAdapter();
     Magic magic = new Magic();
-//    private TaskDecodingChain taskDecodingChain = TaskDecodingChain.getSingleInstance();
-//    private TaskConfigOps taskConfigOps = (TaskConfigOps) SimpleTaskContext.getContext().get(ContextConstant.CONFIG);
-//    private ServiceCenter serviceCenter = (ServiceCenter) SimpleTaskContext.getContext().get("serviceCenter");
 
     public TU encoding(Class zClass, Method method, Object[] args) {
         if (method.getDeclaringClass() != Object.class) {

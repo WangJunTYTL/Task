@@ -10,8 +10,10 @@ import com.peaceful.task.context.common.ContextConstant;
 import com.peaceful.task.context.config.TaskConfigOps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.duration.FiniteDuration;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 系统启动入口,你可以以client或server模式启动该系统
@@ -31,7 +33,7 @@ public class Task {
 
     private final static TaskContext CONTEXT = SimpleTaskContext.CONTEXT;
 
-    private final static Map<Class,Object> CLIENT_PROXY_INSTANCE = (Map<Class, Object>) SimpleTaskContext.CONTEXT.get(ContextConstant.CLIENT_PROXY_INSTANCE);
+    private final static Map<Class, Object> CLIENT_PROXY_INSTANCE = (Map<Class, Object>) SimpleTaskContext.CONTEXT.get(ContextConstant.CLIENT_PROXY_INSTANCE);
 
     static {
 
@@ -56,19 +58,9 @@ public class Task {
                 throw new AfterStartException(e.getMessage());
             }
         }
-        LOGGER.info("Your Task System Successfully Started,Play it as a lightweight Distributed Computing platform!");
+        LOGGER.info("Your TaskUnit System Successfully Started,Play it as a lightweight Distributed Computing platform!");
     }
 
-
-    /**
-     * 目标Task对应的实例不可以被容器准确的实例化,需要用户手动注入到所有Task对应实例容器
-     *
-     * @param instance
-     * @return
-     */
-    public static void registerASyncClassInstance(Object instance) {
-        SimpleTaskContext.BEAN_FACTORY.newInstance(instance);
-    }
 
     /**
      * 注册Java原生类到容器中,通过容器获取到的Java实例,可以通过Task调度器异步执行
@@ -85,6 +77,19 @@ public class Task {
             CLIENT_PROXY_INSTANCE.put(tClass, o);
             return o;
         }
+    }
+
+    public static void scheduleOnce(long delay, TimeUnit timeUnit, Runnable runnable) {
+        AKKA.scheduler().scheduleOnce(FiniteDuration.apply(delay, timeUnit), runnable, AKKA.dispatcher());
+    }
+
+
+    public static void scheduleOnce(long delay, long interval, TimeUnit timeUnit, Runnable runnable) {
+        AKKA.scheduler().schedule(FiniteDuration.apply(delay, timeUnit), FiniteDuration.apply(interval, timeUnit), runnable, AKKA.dispatcher());
+    }
+
+    public static void loadToJvm(){
+        // pass
     }
 
 

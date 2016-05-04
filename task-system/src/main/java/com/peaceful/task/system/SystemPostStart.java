@@ -26,7 +26,7 @@ public class SystemPostStart extends BaseChain {
     }
 
     public boolean execute(TaskContext context) throws Exception {
-        return super.execute((Context) context);
+        return super.execute(context);
     }
 
     static {

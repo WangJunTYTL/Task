@@ -1,20 +1,30 @@
 $(function () {
 
+    var isEmptyObject = function (obj) {
+        for (var name in obj) {
+            return false;
+        }
+        return true;
+    };
+
     var systemName = $("#currentCluster").html();
     var task_dispatch_map = new Map();
     var task_rate_map = new Map();
-    var cluster_nodes = new Array();
+    var cluster_nodes = [];
 
     var load_task_rate_data = function () {
         $.post("/rate/task", {currentCluster: systemName}, function (data) {
-            var tasks = JSON.parse(data);
-            $("#ratePanel").html('');
-            var flag = false;
-            for (var i = 0; i < tasks.length; i++) {
-                task_rate_map.put(tasks[i]['task'],tasks[i]);
+            var result = JSON.parse(data);
+            if (result.code == 0) {
+                var tasks = JSON.parse(result['result']);
+                for (var i = 0; i < tasks.length; i++) {
+                    task_rate_map.put(tasks[i]['task'], tasks[i]);
+                }
+            }else{
+                alert("获取任务速率失败!!!");
             }
         });
-    }
+    };
 
     load_task_rate_data();
 
@@ -22,51 +32,27 @@ $(function () {
     //加载任务面板
     var load_task_panel = function () {
         $.post("/taskmap", {currentCluster: systemName}, function (data) {
-            var taskMap = JSON.parse(data);
-            $("#taskListPanel").html('');
-            var expireTasks = new Array();
-            var dispatchTasks = new Array();
-            task_dispatch_map = new Map;
-            for (key in taskMap) {
-                var task = JSON.parse(taskMap[key]);
-                if (task['expire']) {
-                    expireTasks.push(task);
-                } else {
-                    dispatchTasks.push(task);
-                    task_dispatch_map.put(task['name'], task);
+            var result = JSON.parse(data);
+            if (result.code == 0) {
+                var taskMap = JSON.parse(result['result']);
+                $("#taskListPanel").html('');
+                var expireTasks = [];
+                var dispatchTasks = [];
+                task_dispatch_map = new Map;
+                for (key in taskMap) {
+                    var task = JSON.parse(taskMap[key]);
+                    if (task['expire']) {
+                        expireTasks.push(task);
+                    } else {
+                        dispatchTasks.push(task);
+                        task_dispatch_map.put(task['name'], task);
+                    }
                 }
-            }
-            if (dispatchTasks.length == 0) {
-                $("#taskListPanel").html('').append("<div class='alert'>当前任务队列为空,无可被调度任务,已调度 <a>" + expireTasks.length + "</a> 个任务</div>")
-            }
-            for (var i = 0; i < dispatchTasks.length; i++) {
-                var task = dispatchTasks[i];
-                var tr = $("<tr>");
-                if (task["state"] == "isLock") {
-                    tr.append($("<td>").html("<a href='javascript:void(0)' class='text-danger updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
-                } else {
-                    tr.append($("<td>").html("<a href='javascript:void(0)' class='text-info updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
+                if (dispatchTasks.length == 0) {
+                    $("#taskListPanel").html('').append("<div class='alert'>当前任务队列为空,无可被调度任务,已调度" + expireTasks.length + "个任务</div>")
                 }
-                // alert(task_rate_map.size());
-                var rate = task_rate_map.get(task['name']);
-                tr.append($("<td>").html(rate['produce']+"/s,"+rate['consume']+"/s,【"+task['reserve']+'】'));
-                if (task['reserve']>687){
-                    tr.attr("class","warning");
-                }
-                if (task["state"] == "OK") {
-                    tr.append($("<td>").html('允许所有节点调度'));
-                } else if (task["state"] == "isLock") {
-                    tr.append($("<td>").html("不允许被任何节点调度")).attr("class", "danger");
-                } else {
-                    tr.append($("<td>").html("只允许被[" + task['state'] + "]调度")).attr("class", "warning");
-                }
-                tr.append($("<td>").html(task['desc']));
-                tr.append($("<td>").html(formatDate(task['updateTime'], 'full')));
-                $("#taskListPanel").append(tr);
-            }
-            $(document).on("click","#expireTaskMenu",function () {
-                for (var i = 0; i < expireTasks.length; i++) {
-                    var task = expireTasks[i];
+                for (var i = 0; i < dispatchTasks.length; i++) {
+                    var task = dispatchTasks[i];
                     var tr = $("<tr>");
                     if (task["state"] == "isLock") {
                         tr.append($("<td>").html("<a href='javascript:void(0)' class='text-danger updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
@@ -75,13 +61,9 @@ $(function () {
                     }
                     // alert(task_rate_map.size());
                     var rate = task_rate_map.get(task['name']);
-                    if (rate == null){
-                        tr.append($("<td>").html("已完成调度"))
-                    }else {
-                        tr.append($("<td>").html(rate['produce'] + "/s," + rate['consume'] + "/s,【" + task['reserve'] + '】'));
-                    }
-                    if (task['reserve']>687){
-                        tr.attr("class","warning");
+                    tr.append($("<td>").html(rate['produce'] + "/s," + rate['consume'] + "/s,【" + task['reserve'] + '】'));
+                    if (task['reserve'] > 687) {
+                        tr.attr("class", "warning");
                     }
                     if (task["state"] == "OK") {
                         tr.append($("<td>").html('允许所有节点调度'));
@@ -94,57 +76,99 @@ $(function () {
                     tr.append($("<td>").html(formatDate(task['updateTime'], 'full')));
                     $("#taskListPanel").append(tr);
                 }
-                $(this).remove();
-            });
-            
+                $("#expireTaskMenu").css("display","block");
+                $(document).on("click", "#expireTaskMenu", function () {
+                    for (var i = 0; i < expireTasks.length; i++) {
+                        var task = expireTasks[i];
+                        var tr = $("<tr>");
+                        if (task["state"] == "isLock") {
+                            tr.append($("<td>").html("<a href='javascript:void(0)' class='text-danger updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
+                        } else {
+                            tr.append($("<td>").html("<a href='javascript:void(0)' class='text-info updatetask'  data-toggle='modal' data-target='#myModal'>" + task['name'] + "</a>"));
+                        }
+                        // alert(task_rate_map.size());
+                        var rate = task_rate_map.get(task['name']);
+                        if (rate == null) {
+                            tr.append($("<td>").html("已完成调度"))
+                        } else {
+                            tr.append($("<td>").html(rate['produce'] + "/s," + rate['consume'] + "/s,【" + task['reserve'] + '】'));
+                        }
+                        if (task['reserve'] > 687) {
+                            tr.attr("class", "warning");
+                        }
+                        if (task["state"] == "OK") {
+                            tr.append($("<td>").html('允许所有节点调度'));
+                        } else if (task["state"] == "isLock") {
+                            tr.append($("<td>").html("不允许被任何节点调度")).attr("class", "danger");
+                        } else {
+                            tr.append($("<td>").html("只允许被[" + task['state'] + "]调度")).attr("class", "warning");
+                        }
+                        tr.append($("<td>").html(task['desc']));
+                        tr.append($("<td>").html(formatDate(task['updateTime'], 'full')));
+                        $("#taskListPanel").append(tr);
+                    }
+                    $(this).css("display","none");
+                });
+            }else{
+                alert("任务调度面板加载失败！");
+            }
         });
-    }
+    };
 
     load_task_panel();
-    
-
 
 
     //加载集群节点面板
     var load_node_panel = function () {
         $.post("/tasknodemap", {currentCluster: systemName}, function (data) {
-            var nodeMap = JSON.parse(data);
-            $("#nodeMapPanel").html('');
-
-            for (key in nodeMap) {
-                var node = JSON.parse(nodeMap[key]);
-                var tr = $("<tr>");
-                cluster_nodes.push(node);
-                if (node["state"] == "OK") {
-                    if (((Date.parse(new Date()) - node['updateTime']) < 2 * 30 * 1000)) {
-                        tr.append("<td> <a class='text-info updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
-                    } else {
-                        tr.append("<td> <a class='text-warning updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
-                    }
-                    tr.append($('<td>server</td>'));
-                } else {
-                    tr.append("<td> <a class='text-danger updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
-                    tr.append($('<td>client</td>'));
-                    tr.attr("class","danger");
+            var result = JSON.parse(data);
+            if (result.code == 0) {
+                var nodeMap = JSON.parse(result['result']);
+                if (isEmptyObject(nodeMap)) {
+                    alert("请注意，当前集群无可用节点！！！");
                 }
-                tr.append($("<td>").html(formatDate(node['updateTime'])));
-                $("#nodeMapPanel").append(tr);
+                $("#nodeMapPanel").html('');
+                for (key in nodeMap) {
+                    var node = JSON.parse(nodeMap[key]);
+                    var tr = $("<tr>");
+                    cluster_nodes.push(node);
+                    if (node["state"] == "OK") {
+                        if (((Date.parse(new Date()) - node['updateTime']) < 2 * 30 * 1000)) {
+                            tr.append("<td> <a class='text-info updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
+                        } else {
+                            tr.append("<td> <a class='text-warning updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
+                        }
+                        tr.append($('<td>server</td>'));
+                    } else {
+                        tr.append("<td> <a class='text-danger updatenode' href='javascript:void(0)' data-toggle='modal' data-target='#myModal'>" + node["hostName"] + "</a></td>");
+                        tr.append($('<td>client</td>'));
+                        tr.attr("class", "danger");
+                    }
+                    tr.append($("<td>").html(formatDate(node['updateTime'])));
+                    $("#nodeMapPanel").append(tr);
+                }
+            }else{
+                alert("集群面板加载失败！");
             }
         });
-    }
+
+    };
 
     load_node_panel();
 
     var load_executor_panel = function () {
         $.post("/executor", {currentCluster: systemName}, function (data) {
-            var executorMap = JSON.parse(data);
-            for (key in executorMap) {
-                var tr = $("<tr>");
-                tr.append("<td>" + key + "</td>").append("<td>" + executorMap[key] + "</td>");
-                $("#executorMapPanel").append(tr);
+            var result = JSON.parse(data);
+            if (result.code == 0) {
+                var executorMap = JSON.parse(result['result']);
+                for (key in executorMap) {
+                    var tr = $("<tr>");
+                    tr.append("<td>" + key + "</td>").append("<td>" + executorMap[key] + "</td>");
+                    $("#executorMapPanel").append(tr);
+                }
             }
         })
-    }
+    };
 
     load_executor_panel();
 
@@ -154,48 +178,52 @@ $(function () {
             var node = $(this).html();
             $("#myModalLabel").html('').html(node);
             $.post("/tasknodemap/update", {currentCluster: systemName, node: node, method: "obtain"}, function (data) {
-                var nodeObject = JSON.parse(data);
-                // alert(Date.parse(new Date()))
-                if ((Date.parse(new Date()) - nodeObject['updateTime']) > 2 * 30 * 1000) {
-                    $("#myModalBody").html('').append("<div class='text-danger'>运行: 该节点或整个集群可能已经停止运行, 因为心跳时间存在问题,上次心跳时间是" + formatDate(nodeObject['updateTime']) + "</div>");
-                } else {
-                    $("#myModalBody").html('').append("<div class='text-success'>运行: 良好</div>");
-                    $("#myModalBody").append("<div class='text-success'>心跳: 正常,最近一次心跳时间是" + formatDate(nodeObject['updateTime']) + "</div>");
-                }
-                if (nodeObject["state"] == "OK") {
-                    $("#myModalBody").append("<div class='text-success'>运行模式: server[可以生产和消费任务]</div>");
-                    $("#myModalBody").append("<p class='text-danger'>你是否要切换为client模式?</p>")
-                    $("#modalConfirmMenu").html('').html("client")
-                } else {
-                    $("#myModalBody").append("<div class='text-success'>运行模式: client [只可以生产任务]</div>");
-                    $("#myModalBody").append("<p class='text-danger'>你是否要切换为server模式?</p>")
-                    $("#modalConfirmMenu").html('').html("server")
-                }
-                $(document).on('click', "#modalConfirmMenu", function () {
-                    $("#myModal").modal('hide');
-                    var state = nodeObject["state"];
-                    if ("OK" == state) {
-                        state = "client";
+                var result = JSON.parse(data);
+                if (result.code == 0) {
+                    var nodeObject = JSON.parse(result['result']);
+                    // alert(Date.parse(new Date()))
+                    if ((Date.parse(new Date()) - nodeObject['updateTime']) > 2 * 30 * 1000) {
+                        $("#myModalBody").html('').append("<div class='text-danger'>运行: 该节点或整个集群可能已经停止运行, 因为心跳时间存在问题,上次心跳时间是" + formatDate(nodeObject['updateTime']) + "</div>");
                     } else {
-                        state = "OK";
+                        $("#myModalBody").html('').append("<div class='text-success'>运行: 良好</div>");
+                        $("#myModalBody").append("<div class='text-success'>心跳: 正常,最近一次心跳时间是" + formatDate(nodeObject['updateTime']) + "</div>");
                     }
-                    $.post("/tasknodemap/update", {
-                        currentCluster: systemName,
-                        node: node,
-                        method: "update",
-                        state: state
-                    }, function (data) {
-                        if (data == "OK") {
-                            load_node_panel();
+                    if (nodeObject["state"] == "OK") {
+                        $("#myModalBody").append("<div class='text-success'>运行模式: server[可以生产和消费任务]</div>");
+                        $("#myModalBody").append("<p class='text-danger'>你是否要切换为client模式?</p>");
+                        $("#modalConfirmMenu").html('').html("client")
+                    } else {
+                        $("#myModalBody").append("<div class='text-success'>运行模式: client [只可以生产任务]</div>");
+                        $("#myModalBody").append("<p class='text-danger'>你是否要切换为server模式?</p>");
+                        $("#modalConfirmMenu").html('').html("server")
+                    }
+                    $(document).on('click', "#modalConfirmMenu", function () {
+                        $("#myModal").modal('hide');
+                        var state = nodeObject["state"];
+                        if ("OK" == state) {
+                            state = "client";
                         } else {
-                            alert("操作失败!");
+                            state = "OK";
                         }
+                        $.post("/tasknodemap/update", {
+                            currentCluster: systemName,
+                            node: node,
+                            method: "update",
+                            state: state
+                        }, function (data) {
+                            var result = JSON.parse(data);
+                            if (result.code == 0) {
+                                load_node_panel();
+                            } else {
+                                alert("操作失败!");
+                            }
+                        });
                     });
-                });
+                }
             });
 
         });
-    }
+    };
 
     updatenode();
 
@@ -205,68 +233,75 @@ $(function () {
             var task = $(this).html();
             $("#myModalLabel").html('').html(task);
             $.post("/taskmap/update", {currentCluster: systemName, task: task, method: "obtain"}, function (data) {
-                var taskObject = JSON.parse(data);
-                $("#myModalBody").html('');
-                $("#myModalBody").append("<div class='text-success'>任务创建时间: " + formatDate(taskObject['createTime'], 'full') + "</div>");
-                $("#myModalBody").append("<div class='text-success'>最后一次提交时间: " + formatDate(taskObject['updateTime'], 'full') + "</div>");
-                if (taskObject['state'] == 'isLock') {
-                    $("#myModalBody").append("<div class='text-danger'>调度策略: 不允许任何节点调度</div>");
-                } else if (taskObject['state'] == 'OK') {
-                    $("#myModalBody").append("<div class='text-success'>调度策略: 允许被所有节点调度</div>");
-                } else {
-                    $("#myModalBody").append("<div class='text-warning'>调度策略: 只允许被" + taskObject['state'] + "调度</div>");
-                }
-                var select = $("<select name='state'>");
-                if (taskObject["state"] == "OK") {
-                    select.append($("<option>").attr("value", "OK").attr("selected", "selected").html("允许所有节点调度"));
-                    select.append($("<option>").attr("value", "isLock").html("不允许调度"));
-                } else if (taskObject["state"] == "isLock") {
-                    select.append($("<option>").attr("value", "isLock").attr("selected", "selected").html("不允许调度"));
-                    select.append($("<option>").attr("value", "OK").html("允许所有节点调度"));
-                } else {
-                    select.append($("<option>").attr("value", "OK").html("允许所有节点调度"));
-                    select.append($("<option>").attr("value", "isLock").html("不允许任何节点调度"));
-                }
-                $.post("/tasknodemap", {currentCluster: systemName}, function (data) {
-                    var nodeMap = JSON.parse(data);
-                    for (key in nodeMap) {
-                        if (key == taskObject['state']) {
-                            select.append($("<option>").attr("value", key).attr("selected", "selected").html("只允许被[" + key + "]调度"));
-                        } else {
-                            select.append($("<option>").attr("value", key).html("只允许被[" + key + "]调度"));
-                        }
+                var result = JSON.parse(data);
+                if (result.code == 0) {
+                    var taskObject = JSON.parse(result['result']);
+                    $("#myModalBody").html('');
+                    $("#myModalBody").append("<div class='text-success'>任务创建时间: " + formatDate(taskObject['createTime'], 'full') + "</div>");
+                    $("#myModalBody").append("<div class='text-success'>最后一次提交时间: " + formatDate(taskObject['updateTime'], 'full') + "</div>");
+                    if (taskObject['state'] == 'isLock') {
+                        $("#myModalBody").append("<div class='text-danger'>调度策略: 不允许任何节点调度</div>");
+                    } else if (taskObject['state'] == 'OK') {
+                        $("#myModalBody").append("<div class='text-success'>调度策略: 允许被所有节点调度</div>");
+                    } else {
+                        $("#myModalBody").append("<div class='text-warning'>调度策略: 只允许被" + taskObject['state'] + "调度</div>");
                     }
-                });
-                $("#myModalBody").append(select);
-
-                $("#myModalBody").append("<div class='text-success'>备注信息</div>");
-                var descInput = $('<input class="form-control"  placeholder="添加简要备注">');
-                if (taskObject['desc'] != null || taskObject['desc'] != '') {
-                    descInput.val(taskObject['desc']);
-                }
-                $("#myModalBody").append(descInput);
-                $("#modalConfirmMenu").html('').html("请确认")
-                $(document).on('click', "#modalConfirmMenu", function () {
-                    $("#myModal").modal('hide');
-                    var state = select.val();
-                    $.post("/taskmap/update", {
-                        currentCluster: systemName,
-                        task: task,
-                        method: "update",
-                        state: state,
-                        desc: descInput.val()
-                    }, function (data) {
-                        if (data == "OK") {
-                            load_task_panel();
-                        } else {
-                            alert("操作失败!");
+                    var select = $("<select name='state'>");
+                    if (taskObject["state"] == "OK") {
+                        select.append($("<option>").attr("value", "OK").attr("selected", "selected").html("允许所有节点调度"));
+                        select.append($("<option>").attr("value", "isLock").html("不允许调度"));
+                    } else if (taskObject["state"] == "isLock") {
+                        select.append($("<option>").attr("value", "isLock").attr("selected", "selected").html("不允许调度"));
+                        select.append($("<option>").attr("value", "OK").html("允许所有节点调度"));
+                    } else {
+                        select.append($("<option>").attr("value", "OK").html("允许所有节点调度"));
+                        select.append($("<option>").attr("value", "isLock").html("不允许任何节点调度"));
+                    }
+                    $.post("/tasknodemap", {currentCluster: systemName}, function (data) {
+                        var result = JSON.parse(data);
+                        if (result.code == 0) {
+                            var nodeMap = JSON.parse(result['result']);
+                            for (key in nodeMap) {
+                                if (key == taskObject['state']) {
+                                    select.append($("<option>").attr("value", key).attr("selected", "selected").html("只允许被[" + key + "]调度"));
+                                } else {
+                                    select.append($("<option>").attr("value", key).html("只允许被[" + key + "]调度"));
+                                }
+                            }
                         }
                     });
-                });
+                    $("#myModalBody").append(select);
+
+                    $("#myModalBody").append("<div class='text-success'>备注信息</div>");
+                    var descInput = $('<input class="form-control"  placeholder="添加简要备注">');
+                    if (taskObject['desc'] != null || taskObject['desc'] != '') {
+                        descInput.val(taskObject['desc']);
+                    }
+                    $("#myModalBody").append(descInput);
+                    $("#modalConfirmMenu").html('').html("请确认");
+                    $(document).on('click', "#modalConfirmMenu", function () {
+                        $("#myModal").modal('hide');
+                        var state = select.val();
+                        $.post("/taskmap/update", {
+                            currentCluster: systemName,
+                            task: task,
+                            method: "update",
+                            state: state,
+                            desc: descInput.val()
+                        }, function (data) {
+                            var result = JSON.parse(data);
+                            if (result.code == 0) {
+                                load_task_panel();
+                            } else {
+                                alert("操作失败!");
+                            }
+                        });
+                    });
+                }
             });
 
         });
-    }
+    };
 
     updatetask();
 
@@ -285,98 +320,101 @@ $(function () {
             function (ec) {
                 var myChart = ec.init(document.getElementById('graph_canvas'));
                 $.post("/rate/total", {currentCluster: systemName}, function (data) {
-                    var parseData;
-                    try {
-                        parseData = JSON.parse(data);
-                    } catch (error) {
-                        parseData = new Object();
-                        parseData['timeAxis'] = [''];
-                        parseData['produceAxis'] = [''];
-                        parseData['consumeAxis'] = [''];
-                    }
-                    var timeAxis = new Array();
-                    if (parseData['timeAxis'] != null) {
-                        for (var i = 0; i < parseData['timeAxis'].length; i++) {
-                            timeAxis.push(formatDate(parseData['timeAxis'][i]));
+                    var result = JSON.parse(data);
+                    if (result.code == 0) {
+                        var parseData;
+                        try {
+                            parseData = JSON.parse(result['result']);
+                        } catch (error) {
+                            parseData = {};
+                            parseData['timeAxis'] = [''];
+                            parseData['produceAxis'] = [''];
+                            parseData['consumeAxis'] = [''];
                         }
-                    }
-                    var option = {
-                        title: {
-                            subtext: '单位/秒'
-                        },
-                        tooltip: {
-                            trigger: 'axis'
-                        },
-                        legend: {
-                            data: ['生产', '消费']
-                        },
-                        toolbox: {
-                            show: true,
-                            feature: {
-                                // mark: {show: true},
-                                // dataView: {show: true, readOnly: false},
-                                magicType: {show: true, type: ['line', 'bar']},
-                                // restore: {show: true},
-                                saveAsImage: {show: true}
+                        var timeAxis = [];
+                        if (parseData['timeAxis'] != null) {
+                            for (var i = 0; i < parseData['timeAxis'].length; i++) {
+                                timeAxis.push(formatDate(parseData['timeAxis'][i]));
                             }
-                        },
-                        calculable: true,
-                        xAxis: [
-                            {
-                                type: 'category',
-                                boundaryGap: false,
-                                data: timeAxis
-                            }
-                        ],
-                        yAxis: [
-                            {
-                                type: 'value',
-                                axisLabel: {
-                                    formatter: '{value}'
-                                }
-                            }
-                        ],
-                        series: [
-                            {
-                                name: '生产',
-                                symbol: 'none',
-                                type: 'line',
-                                data: parseData['produceAxis'],
-                                smooth: true,
-                                itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                markPoint: {
-                                    data: [
-                                        {type: 'max', name: '最大值'},
-                                        {type: 'min', name: '最小值'}
-                                    ]
-                                },
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'}
-                                    ]
+                        }
+                        var option = {
+                            title: {
+                                subtext: '单位/秒'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                data: ['生产', '消费']
+                            },
+                            toolbox: {
+                                show: true,
+                                feature: {
+                                    // mark: {show: true},
+                                    // dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    // restore: {show: true},
+                                    saveAsImage: {show: true}
                                 }
                             },
-                            {
-                                name: '消费',
-                                type: 'line',
-                                symbol: 'none',
-                                smooth: true,
-                                itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                data: parseData['consumeAxis'],
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'}
-                                    ]
+                            calculable: true,
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    boundaryGap: false,
+                                    data: timeAxis
                                 }
-                            }
-                        ]
-                    };
-                    myChart.setOption(option);
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '生产',
+                                    symbol: 'none',
+                                    type: 'line',
+                                    data: parseData['produceAxis'],
+                                    smooth: true,
+                                    itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                    markPoint: {
+                                        data: [
+                                            {type: 'max', name: '最大值'},
+                                            {type: 'min', name: '最小值'}
+                                        ]
+                                    },
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '平均值'}
+                                        ]
+                                    }
+                                },
+                                {
+                                    name: '消费',
+                                    type: 'line',
+                                    symbol: 'none',
+                                    smooth: true,
+                                    itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                    data: parseData['consumeAxis'],
+                                    markLine: {
+                                        data: [
+                                            {type: 'average', name: '平均值'}
+                                        ]
+                                    }
+                                }
+                            ]
+                        };
+                        myChart.setOption(option);
+                    }
                 });
 
             }
         );
-    }
+    };
 
     load_total_rate_panel();
 
@@ -386,9 +424,17 @@ $(function () {
         load_task_rate_data();
         load_node_panel();
         load_task_panel();
-    }
+    };
 
-    setInterval(refresh, 60000);
+    var intervalId = setInterval(refresh, 60000);
+
+    $(document).on("click", '.page-refresh', function () {
+        window.clearInterval(intervalId);
+        var v = $(this).html().split("s")[0];
+        $(".page-refresh").parent().removeClass("active");
+        $(this).parent().addClass("active");
+        intervalId = setInterval(refresh, v * 1000);
+    });
 
 
     function formatDate(timestamp, full) {

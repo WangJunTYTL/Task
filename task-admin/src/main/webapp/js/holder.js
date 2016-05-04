@@ -1646,7 +1646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = Holder;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())));
 
 /***/ },
 /* 2 */
@@ -2265,7 +2265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return svgCSS + svgText;
 	};
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())));
 
 /***/ },
 /* 7 */
@@ -2333,7 +2333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return retval;
 	};
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())));
 
 /***/ },
 /* 8 */
@@ -2513,7 +2513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  val = val.valueOf
 	    ? val.valueOf()
-	    : Object.prototype.valueOf.apply(val)
+	    : Object.prototype.valueOf.apply(val);
 
 	  return typeof val;
 	};
@@ -2542,7 +2542,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ }
 /******/ ])
 });
-;
 (function(ctx, isMeteorPackage) {
     if (isMeteorPackage) {
         Holder = ctx.Holder;

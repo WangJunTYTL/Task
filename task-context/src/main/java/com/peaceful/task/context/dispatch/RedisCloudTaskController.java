@@ -43,8 +43,7 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
         task_node_list = prefix + "-NODE" + "-LIST";
         task_executor_list = prefix + "-EXECUTOR-LIST";
         ScheduledExecutorService executorService = (ScheduledExecutorService) SimpleTaskContext.CONTEXT.get(ContextConstant.PUBLICE_SCHEDULE);
-        executorService.scheduleAtFixedRate(new RefreshController(), 2, 1, TimeUnit.SECONDS);
-
+        executorService.scheduleAtFixedRate(new RefreshController(), 6, 2, TimeUnit.SECONDS);
         Redis.cmd().del(task_executor_list);
         for (Executor e : EXECUTOR_LIST) {
             Redis.cmd().hset(task_executor_list, e.name, e.implementation);
@@ -53,8 +52,8 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
 
     private void upload() {
         // 上传任务配置信息
-        Collection<Task> tasks = findAllTasks();
-        for (Task task : tasks) {
+        Collection<TaskUnit> tasks = findAllTasks();
+        for (TaskUnit task : tasks) {
             Redis.cmd().hset(task_list, task.name, JSON.toJSONString(task));
         }
 
@@ -79,8 +78,8 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
         // 同步策略: desc state createTime 以远端为主  expire reserve 以本地为主,只上传,不下载 , updateTime 需要以最大为主
         Map<String, String> configs = Redis.cmd().hgetAll(task_list);
         for (String name : configs.keySet()) {
-            Task task = JSON.parseObject(configs.get(name), Task.class);
-            Task local = TASK_LIST.get(name);
+            TaskUnit task = JSON.parseObject(configs.get(name), TaskUnit.class);
+            TaskUnit local = TASK_LIST.get(name);
             if (local == null) {
                 local = TASK_HISTORY_LIST.get(task.name);
             }
@@ -151,11 +150,11 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
     }
 
     private void removeNode(String hostname) {
-        Redis.cmd().hdel(task_node_list, new String[]{hostname});
+        Redis.cmd().hdel(task_node_list, hostname);
     }
 
     @Override
-    public Collection<Task> findNeedDispatchTasks() {
+    public Collection<TaskUnit> findNeedDispatchTasks() {
         String hostname = NetHelper.getHostname();
         if (NODE_MAP.containsKey(hostname) && NODE_MAP.get(hostname).state.equals("OK")) {
             return super.findNeedDispatchTasks();

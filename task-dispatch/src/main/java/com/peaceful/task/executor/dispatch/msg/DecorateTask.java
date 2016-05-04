@@ -7,6 +7,8 @@ import akka.event.LoggingAdapter;
 import com.peaceful.common.util.ExceptionUtils;
 import com.peaceful.task.context.SimpleTaskContext;
 import com.peaceful.task.context.coding.TUR;
+import org.perf4j.StopWatch;
+import org.perf4j.slf4j.Slf4JStopWatch;
 
 /**
  * 装饰TaskUnit,使其在完成任务后通知executor dispatch
@@ -30,7 +32,10 @@ public class DecorateTask implements Runnable {
         TaskCompleted completed = new TaskCompleted(taskUnit);
         completed.startTime = System.currentTimeMillis();
         try {
+            StopWatch watch = new Slf4JStopWatch();
             taskUnit.run();
+            watch.stop("TASK.CONSUME");
+            watch.stop("task."+taskUnit.getTask().queueName + ".consume");
         } catch (Exception e) {
             log.error("{} execute error {}", taskUnit.getTask().id, ExceptionUtils.getStackTrace(e));
         } finally {

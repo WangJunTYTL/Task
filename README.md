@@ -38,6 +38,7 @@ public class SetUp {
 2. [监控部署](./doc/page/taskmonitor.md)
 2. [任务生产](./doc/page/taskproduce.md)
 2. [调度策略](./doc/page/dispatch.md)
+2. [可扩展](./doc/page/extension.md)
 3. ...待更新
 
 

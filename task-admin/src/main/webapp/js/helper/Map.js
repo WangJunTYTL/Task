@@ -3,7 +3,7 @@ Array.prototype.remove = function(s) {
         if (s == this[i])
             this.splice(i, 1);
     }
-}
+};
 
 /**
  * Simple Map
@@ -23,9 +23,9 @@ Array.prototype.remove = function(s) {
  */
 function Map() {
     /** 存放键的数组(遍历用到) */
-    this.keys = new Array();
+    this.keys = [];
     /** 存放数据 */
-    this.data = new Object();
+    this.data = {};
 
     /**
      * 放入一个键值对

@@ -21,7 +21,7 @@ public class ExecutorModuleRootActor extends UntypedActor {
     @Override
     public void preStart() throws Exception {
 //        execute dispatch actor 负责 整个Task系统的调度
-        ActorRef executorDispatch = getContext().actorOf(Props.create(ExecutorDispatcherActor.class), "executorDispatch");
+        ActorRef executorDispatch = getContext().actorOf(Props.create(DispatcherCenterActor.class), "executorDispatch");
         SimpleTaskContext.CONTEXT.put("executorDispatch", executorDispatch);
 //        public  actor 作为其它需要利用到actor地方的监管者
         getContext().actorOf(Props.create(PublicActor.class), "public");

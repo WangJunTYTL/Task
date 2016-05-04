@@ -26,7 +26,6 @@ public class WelcomeController {
 
     @RequestMapping(value = {"index", ""})
     public String index(HttpServletRequest request) {
-        String name = (String) request.getAttribute("currentCluster");
         return "welcome/index";
     }
 
@@ -45,10 +44,14 @@ public class WelcomeController {
         return "welcome/template03";
     }
 
+    @RequestMapping(value = "04")
+    public String template04(HttpServletRequest request) {
+        return "welcome/template04";
+    }
+
 
     @RequestMapping(value = {"help"})
     public String help(HttpServletRequest request) {
-        String name = (String) request.getAttribute("currentCluster");
         return "help/index";
     }
 

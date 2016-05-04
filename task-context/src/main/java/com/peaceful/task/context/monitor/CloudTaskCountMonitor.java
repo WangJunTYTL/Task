@@ -22,7 +22,7 @@ public class CloudTaskCountMonitor extends SimpleTaskCountMonitor {
         CLOUD_TASK_PRODUCE_COUNT = "TASK-" + ops.name + "-PRODUCE-COUNT-MONITOR";
         CLOUD_TASK_CONSUME_COUNT = "TASK-" + ops.name + "-CONSUME-COUNT-MONITOR";
         ScheduledExecutorService executorService = (ScheduledExecutorService) SimpleTaskContext.CONTEXT.get(ContextConstant.PUBLICE_SCHEDULE);
-        executorService.scheduleAtFixedRate(new CloudMonitorSync(), 2, 1, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(new CloudMonitorSync(), 6, 6, TimeUnit.SECONDS);
     }
 
 

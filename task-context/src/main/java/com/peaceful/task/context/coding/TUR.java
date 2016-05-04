@@ -37,10 +37,6 @@ public class TUR implements Runnable{
                 logger.error("task id {} no matching method {}  {}", task.id, task.aclass.getSimpleName() + "." + task.method, ExceptionUtils.getStackTrace(e));
                 return;
             }
-            if (method == null) {
-                logger.error("task id {} no matching method {}", task.id, task.aclass.getSimpleName() + "." + task.method);
-                return;
-            }
             try {
                 method.invoke(SimpleTaskContext.BEAN_FACTORY.getBean(task.aclass), task.args);
             } catch (IllegalAccessException e) {

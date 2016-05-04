@@ -11,6 +11,7 @@ import com.peaceful.common.util.SPI;
 import com.peaceful.common.util.chain.BaseContext;
 import com.peaceful.common.util.chain.Context;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,16 +71,19 @@ public class SimpleTaskContext extends TaskContext {
                 throw new RuntimeException("bootMode parameter error. client or server");
             }
         }
-
-        CONTEXT.put(ContextConstant.PUBLICE_SCHEDULE, scheduledExecutorService);
-        CONTEXT.put(ContextConstant.CONTROLLER, new RedisCloudTaskController());
-        CONTEXT.put(ContextConstant.MONITOR, new CloudTaskCountMonitor());
-        CONTEXT.put(ContextConstant.CODING, CODING);
-        CONTEXT.put(ContextConstant.QUEUE, QUEUE);
-        CONTEXT.put(ContextConstant.CLIENT_PROXY, CLIENT_PROXY);
-        CONTEXT.put(ContextConstant.BEAN_FACTORY, BEAN_FACTORY);
-        CONTEXT.put(ContextConstant.CLIENT_PROXY_INSTANCE, CLIENT_PROXY_INSTANCE);
-
+        try {
+            CONTEXT.put(ContextConstant.PUBLICE_SCHEDULE, scheduledExecutorService);
+            CONTEXT.put(ContextConstant.CONTROLLER, new RedisCloudTaskController());
+            CONTEXT.put(ContextConstant.MONITOR, new CloudTaskCountMonitor());
+            CONTEXT.put(ContextConstant.CODING, CODING);
+            CONTEXT.put(ContextConstant.QUEUE, QUEUE);
+            CONTEXT.put(ContextConstant.CLIENT_PROXY, CLIENT_PROXY);
+            CONTEXT.put(ContextConstant.BEAN_FACTORY, BEAN_FACTORY);
+            CONTEXT.put(ContextConstant.CLIENT_PROXY_INSTANCE, CLIENT_PROXY_INSTANCE);
+        } catch (Exception e) {
+            LOGGER.error("SimpleTaskContext can't load->{}", ExceptionUtils.getRootCauseMessage(e.getCause()));
+            System.exit(1);
+        }
 
     }
 

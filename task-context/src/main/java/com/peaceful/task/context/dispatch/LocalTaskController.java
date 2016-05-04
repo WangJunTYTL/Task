@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class LocalTaskController implements TaskController {
 
 
-    Map<String, Task> taskLockList = new LinkedHashMap<String, Task>();
+    Map<String, TaskUnit> taskLockList = new LinkedHashMap<String, TaskUnit>();
     private final static TaskConfigOps ops = (TaskConfigOps) SimpleTaskContext.CONTEXT.get(ContextConstant.CONFIG);
     private final static String name = ops.name;
 
@@ -42,8 +42,8 @@ public class LocalTaskController implements TaskController {
 
 
     @Override
-    public Collection<Task> findAllTasks() {
-        Collection<Task> tasks = new ArrayList<Task>();
+    public Collection<TaskUnit> findAllTasks() {
+        Collection<TaskUnit> tasks = new ArrayList<TaskUnit>();
         tasks.addAll(TASK_HISTORY_LIST.values());
         //后加入未过期任务,可以覆盖过期任务
         tasks.addAll(TASK_LIST.values());
@@ -53,10 +53,10 @@ public class LocalTaskController implements TaskController {
     @Override
     public void insertTask(String name) {
         if (TASK_LIST.containsKey(name)) {
-            Task task = TASK_LIST.get(name);
+            TaskUnit task = TASK_LIST.get(name);
             task.updateTime = System.currentTimeMillis();
         } else {
-            Task task = new Task(name);
+            TaskUnit task = new TaskUnit(name);
             task.createTime = System.currentTimeMillis();
             task.updateTime = System.currentTimeMillis();
             TASK_LIST.put(task.name, task);
@@ -64,14 +64,14 @@ public class LocalTaskController implements TaskController {
     }
 
     @Override
-    public void removeTask(Task task) {
+    public void removeTask(TaskUnit task) {
         TASK_LIST.remove(task.name);
     }
 
     @Override
-    public Collection<Task> findNeedDispatchTasks() {
-        Set<Task> tasks = new HashSet<Task>();
-        for (Task task : TASK_LIST.values()) {
+    public Collection<TaskUnit> findNeedDispatchTasks() {
+        Set<TaskUnit> tasks = new HashSet<TaskUnit>();
+        for (TaskUnit task : TASK_LIST.values()) {
             if (task.state.equals("isLock")) {
                 // pass
             } else if (task.state.equals("OK")) {
@@ -100,7 +100,7 @@ public class LocalTaskController implements TaskController {
                 // 清理过期的任务,
                 // 过期逻辑是:如果一个任务的updateTime长时间未被更新且任务所属队列为空,则说明该任务已经过期
                 // 如果过期任务被再次提交,任务会进入到可能被调度列表,但此时过期列表也存在,为了避免疑惑,则从过期列表中清除
-                for (Task task : TASK_LIST.values()) {
+                for (TaskUnit task : TASK_LIST.values()) {
                     if ((task.updateTime + TimeUnit.MINUTES.toMillis(5)) < System.currentTimeMillis()) {
                         if (SimpleTaskContext.QUEUE.size("TASK-" + name + "-" + task.name) == 0) {
                             TASK_LIST.remove(task.name);
@@ -109,7 +109,7 @@ public class LocalTaskController implements TaskController {
                         }
                     }
                 }
-                for (Task task : TASK_HISTORY_LIST.values()) {
+                for (TaskUnit task : TASK_HISTORY_LIST.values()) {
                     if (SimpleTaskContext.QUEUE.size("TASK-" + name + "-" + task.name) != 0) {
                         TASK_HISTORY_LIST.remove(task.name);
                         task.expire = false;

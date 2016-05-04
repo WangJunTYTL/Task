@@ -25,21 +25,18 @@
 
     <!--log config start-->
     <logger name="org.perf4j.TimingLogger" additivity="false">
-        <level value="INFO"/>
+        <level value="DEBUG"/>
         <appender-ref ref="CoalescingStatistics"/>
     </logger>
 
-    <logger name="redis.proxy" additivity="false">
-        <level value="error"/>
+ <!--log config start-->
+    <logger name="com.peaceful.common.redis" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="console-appender"/>
     </logger>
 
-
-
-    <logger name="com.peaceful.common" additivity="false">
-        <level value="error"/>
-    </logger>
     <root>
-        <priority value="debug"/>
+        <priority value="INFO"/>
         <appender-ref ref="console-appender"/>
     </root>
 </log4j:configuration>

@@ -16,13 +16,13 @@ import scala.concurrent.duration.Duration;
  * <p/>
  * Created by wangjun on 16/1/12.
  */
-public class ExecutorActor extends UntypedActor {
+public class ExecutorSupervisionActor extends UntypedActor {
 
     // // TODO: 16/1/12 测试executor失败的情况 
     TaskExecutor taskExecutor;
     DiagnosticLoggingAdapter log = Logging.getLogger(this);
 
-    public ExecutorActor(TaskExecutor taskExecutor) {
+    public ExecutorSupervisionActor(TaskExecutor taskExecutor) {
         this.taskExecutor = taskExecutor;
     }
 

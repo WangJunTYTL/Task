@@ -14,7 +14,7 @@ public class Hello {
 
     @Task(value = "Test06"/*,executor = "jucExecutor"*/)
     public void say(String msg) throws InterruptedException {
-        Thread.sleep(1000);
+//        Thread.sleep(1000);
         System.out.println(msg);
     }
 
