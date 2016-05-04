@@ -104,16 +104,13 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
             }
         }
 
-        // 更新本地节点配置信息
+        // 更新本地节点配置信息,节点信息主要是状态属性，以远端为主
         Map<String, String> nodeConfigs = Redis.cmd().hgetAll(task_node_list);
-        for (
-                String name
-                : nodeConfigs.keySet())
-
-        {
+        for (String name : nodeConfigs.keySet()) {
             Node node = JSON.parseObject(nodeConfigs.get(name), Node.class);
-            if (NODE_MAP.containsKey(name)) {
-                node.updateTime = NODE_MAP.get(name).updateTime;
+            Node local = NODE_MAP.get(node.hostName);
+            if (local != null && local.updateTime > node.updateTime){
+                node.updateTime = local.updateTime;
             }
             NODE_MAP.put(name, node);
         }
