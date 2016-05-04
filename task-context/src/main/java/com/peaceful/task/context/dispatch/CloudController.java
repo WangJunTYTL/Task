@@ -6,6 +6,7 @@ import com.peaceful.task.context.cluster.Node;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author WangJun
@@ -14,7 +15,7 @@ import java.util.Map;
 public interface CloudController extends TaskController {
 
 
-    Map<String,Node> NODE_MAP = new HashMap<String, Node>();
+    Map<String,Node> NODE_MAP = new ConcurrentHashMap<String, Node>();
 
     /**
      * 本地和云端进行信息同步
