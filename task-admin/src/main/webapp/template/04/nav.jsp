@@ -58,10 +58,7 @@
                         <a href="/static/page/dispatch.html" target="_blank">调度策略</a>
                     </li>
                     <li>
-                        <a href="/static/page/taskmonitor.html" target="_blank">扩展性</a>
-                    </li>
-                    <li>
-                        <a href="/static/page/taskmonitor.html" target="_blank">疑问解答</a>
+                        <a href="/static/page/extension.html" target="_blank">扩展性</a>
                     </li>
                     <li>
                         <a href="https://github.com/WangJunTYTL/task" target="_blank">项目地址</a>

@@ -35,10 +35,10 @@ public class SetUp {
 1. [概述](./doc/page/overview.md)
 2. [快速上手](./doc/page/quickstart.md)
 2. [Task配置](./doc/page/taskconf.md)
-2. [监控部署](./doc/page/taskmonitor.md)
 2. [任务生产](./doc/page/taskproduce.md)
 2. [调度策略](./doc/page/dispatch.md)
 2. [可扩展](./doc/page/extension.md)
+2. [监控部署](./doc/page/taskmonitor.md)
 3. ...待更新
 
 
