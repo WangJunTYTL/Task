@@ -32,6 +32,8 @@ public class ContextModule implements TaskModule {
             } else {
                 LOGGER.info("develop-mode:product");
             }
+            LOGGER.info("queue: {}", taskConfigOps.queue);
+            LOGGER.info("bean-factory: {}", taskConfigOps.beanFactory);
             LOGGER.info("dispatch-tick: {}ms", taskConfigOps.dispatchTick);
             for (Executor executor : taskConfigOps.executorConfigOps.executorNodeList) {
                 LOGGER.info("executor: {} implementation: {}", executor.name, executor.implementation);

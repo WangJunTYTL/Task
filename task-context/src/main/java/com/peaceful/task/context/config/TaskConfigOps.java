@@ -17,6 +17,10 @@ public class TaskConfigOps {
     //系统启动模式,client or server
     public String bootMode = "client";
 
+    public String queue;
+
+    public String beanFactory;
+
     // test or product
     public String developMode = "product";
 

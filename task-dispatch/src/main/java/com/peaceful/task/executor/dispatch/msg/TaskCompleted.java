@@ -12,7 +12,7 @@ public class TaskCompleted {
 
     // task id
     public String id;
-    // queue of task
+    // QUEUE of task
     public String queue;
     // execute of task
     public String executor;

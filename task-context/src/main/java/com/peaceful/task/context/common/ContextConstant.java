@@ -12,11 +12,11 @@ public class ContextConstant {
     public final static String CONTROLLER = "controller";
     public final static String MONITOR = "monitor";
     // 任务编码器
-    public final static String CODING = "coding";
+    public final static String CODING = "CODING";
     // 任务提交代理工具类
     public final static String CLIENT_PROXY = "clientProxy";
     // 任务队列存储器
-    public final static String QUEUE = "queue";
+    public final static String QUEUE = "QUEUE";
     // 任务bean获取工厂工具
     public final static String BEAN_FACTORY = "beanFactory";
 

@@ -35,9 +35,9 @@ public class SystemPreStart extends BaseChain {
 //        Single.chain.addCommand(new ExecutorModule());
         // load console
 //        Single.chain.addCommand(new LoadConsole());
-        // load coding
+        // load CODING
 //        Single.chain.addCommand(new CodingModule());
-        // load queue
+        // load QUEUE
 //        Single.chain.addCommand(new LoadQueue());
     }
 }

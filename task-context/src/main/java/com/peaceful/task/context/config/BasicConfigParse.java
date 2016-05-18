@@ -20,6 +20,19 @@ public class BasicConfigParse implements Command {
         taskConfigOps.name = config.getString("task.name");
         taskConfigOps.bootMode = config.getString("task.boot-mode");
         taskConfigOps.developMode = config.getString("task.develop-mode");
+        if (config.hasPath("task.queue")){
+            taskConfigOps.queue = config.getString("task.queue");
+        }else{
+            taskConfigOps.queue = "com.peaceful.task.queue.redis.RedisQueue";
+        }
+        if (config.hasPath("task.bean-factory")){
+            taskConfigOps.beanFactory = config.getString("task.bean-factory");
+        }else{
+            taskConfigOps.beanFactory = "com.peaceful.task.context.dispatch.TaskBeanFactoryImpl";
+        }
+
+
+        taskConfigOps.beanFactory = config.getString("task.bean-factory");
         return CONTINUE_PROCESSING;
     }
 }

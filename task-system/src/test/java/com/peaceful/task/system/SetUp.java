@@ -11,7 +11,7 @@ public class SetUp {
     public static void main(String[] args) throws InterruptedException {
 
         Hello hello = Task.registerASyncClass(Hello.class);
-        int time = 1000;
+        int time = 1;
         for (int i=0;i< time;i++) {
             // 基本类型测试
             hello.say("hello world!");

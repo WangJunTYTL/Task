@@ -58,7 +58,12 @@ public class Task {
                 throw new AfterStartException(e.getMessage());
             }
         }
-        LOGGER.info("Your TaskUnit System Successfully Started,Play it as a lightweight Distributed Computing platform!");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // .ignore
+        }
+        LOGGER.info("Your Task System Successfully Started,Play it as a lightweight Distributed Computing platform!");
     }
 
 
