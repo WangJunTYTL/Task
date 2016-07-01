@@ -1,7 +1,7 @@
 package com.peaceful.task.context;
 
 import com.peaceful.task.context.config.Executor;
-import com.peaceful.task.context.dispatch.TaskUnit;
+import com.peaceful.task.context.dispatch.TaskMeta;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,34 +12,40 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public interface TaskController {
 
+    // 执行器列表
     List<Executor> EXECUTOR_LIST = new ArrayList<Executor>();
-    // 此处必须使用线程安全的集合,因为需要在多线程下操作
-    Map<String, TaskUnit> TASK_HISTORY_LIST = new ConcurrentHashMap<String, TaskUnit>();
-    Map<String, TaskUnit> TASK_LIST = new ConcurrentHashMap<String, TaskUnit>();
+    // 可能已经完成的任务调度列表，此处必须使用线程安全的集合
+    Map<String, TaskMeta> TASK_HISTORY_LIST = new ConcurrentHashMap<String, TaskMeta>();
+    // 正在调度任务列表
+    Map<String, TaskMeta> TASK_LIST = new ConcurrentHashMap<String, TaskMeta>();
 
     /**
-     * 获取所有的任务
+     * 获取所有的任务，包括可能完成的任务与正在调度的任务
+     *
      * @return
      */
-    Collection<TaskUnit> findAllTasks();
+    Collection<TaskMeta> findAllTasks();
 
     /**
-     * 加入任务
+     * 加入任务，如果任务已经存在，则更新任务的更新时间
+     *
      * @param name
      */
     void insertTask(String name);
 
 
-    void removeTask(TaskUnit task);
+    void removeTask(TaskMeta task);
 
     /**
-     *  获取节点可以调度的任务
+     * 获取本地可以调度的任务
+     *
      * @return
      */
-    Collection<TaskUnit> findNeedDispatchTasks();
+    Collection<TaskMeta> findNeedDispatchTasks();
 
     /**
      * 获取所有的
+     *
      * @return
      */
     Collection<Executor> findAllExecutors();

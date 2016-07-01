@@ -7,7 +7,7 @@ import com.peaceful.task.context.TaskMonitor;
 import com.peaceful.task.context.coding.TUR;
 import com.peaceful.task.context.common.ContextConstant;
 import com.peaceful.task.context.config.TaskConfigOps;
-import com.peaceful.task.context.dispatch.TaskUnit;
+import com.peaceful.task.context.dispatch.TaskMeta;
 import com.peaceful.task.context.error.GetNextTaskException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class TaskUtils {
      */
     public static TUR next(String queueName) {
         try {
-            if (TASK_CONTROLLER.findNeedDispatchTasks().contains(new TaskUnit(queueName))) {
+            if (TASK_CONTROLLER.findNeedDispatchTasks().contains(new TaskMeta(queueName))) {
                 String taskJson = SimpleTaskContext.QUEUE.pop("TASK-" + taskConfigOps.name + "-" + queueName);
                 if (StringUtils.isNoneEmpty(taskJson)) {
                     TUR taskUnit = taskCodingI.decoding(taskJson);

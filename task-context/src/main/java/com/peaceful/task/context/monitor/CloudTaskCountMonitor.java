@@ -4,6 +4,8 @@ import com.peaceful.task.context.SimpleTaskContext;
 import com.peaceful.task.context.common.ContextConstant;
 import com.peaceful.task.context.config.TaskConfigOps;
 import com.peaceful.common.redis.service.Redis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,10 +14,11 @@ import java.util.concurrent.TimeUnit;
  * @author WangJun
  * @version 1.0 16/4/4
  */
-public class CloudTaskCountMonitor extends SimpleTaskCountMonitor {
+public class CloudTaskCountMonitor extends LocalTaskCountMonitor {
 
     private static String CLOUD_TASK_PRODUCE_COUNT;
     private static String CLOUD_TASK_CONSUME_COUNT;
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     public CloudTaskCountMonitor() {
         TaskConfigOps ops = (TaskConfigOps) SimpleTaskContext.CONTEXT.get(ContextConstant.CONFIG);
@@ -30,14 +33,18 @@ public class CloudTaskCountMonitor extends SimpleTaskCountMonitor {
 
         @Override
         public void run() {
+            try {
+                for (String queue : TASK_PRODUCT_COUNT.keySet()) {
+                    Redis.cmd().hincrBy(CLOUD_TASK_PRODUCE_COUNT, queue, TASK_PRODUCT_COUNT.get(queue).getAndSet(0));
+                }
 
-            for (String queue : TASK_PRODUCT_COUNT.keySet()) {
-                Redis.cmd().hincrBy(CLOUD_TASK_PRODUCE_COUNT, queue, TASK_PRODUCT_COUNT.get(queue).getAndSet(0));
+                for (String queue : TASK_CONSUME_COUNT.keySet()) {
+                    Redis.cmd().hincrBy(CLOUD_TASK_CONSUME_COUNT, queue, TASK_CONSUME_COUNT.get(queue).getAndSet(0));
+                }
+            } catch (Exception e) {
+                logger.error("upload task submit & consume count error", e);
             }
 
-            for (String queue : TASK_CONSUME_COUNT.keySet()) {
-                Redis.cmd().hincrBy(CLOUD_TASK_CONSUME_COUNT, queue, TASK_CONSUME_COUNT.get(queue).getAndSet(0));
-            }
         }
     }
 

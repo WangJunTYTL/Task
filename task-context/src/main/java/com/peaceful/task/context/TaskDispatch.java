@@ -1,6 +1,6 @@
 package com.peaceful.task.context;
 
-import com.peaceful.task.context.dispatch.TaskUnit;
+import com.peaceful.task.context.dispatch.TaskMeta;
 
 import java.util.Collection;
 
@@ -12,5 +12,5 @@ import java.util.Collection;
  */
 public interface TaskDispatch {
 
-    void dispatch(Collection<TaskUnit> tasks);
+    void dispatch(Collection<TaskMeta> tasks);
 }

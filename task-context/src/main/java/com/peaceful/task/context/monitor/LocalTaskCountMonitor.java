@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author WangJun
  * @version 1.0 16/4/4
  */
-public class SimpleTaskCountMonitor implements TaskMonitor {
+public class LocalTaskCountMonitor implements TaskMonitor {
 
 
     public static final Map<String, AtomicLong> TASK_PRODUCT_COUNT = new ConcurrentHashMap<String, AtomicLong>();

@@ -66,6 +66,9 @@
                 </ul>
             </li>
             <li class="header">LABELS</li>
+            <li>
+                <a href="https://github.com/WangJunTYTL/task" target="_blank"><i class="fa fa-circle-o text-danger"></i><span>预警配置</span></a>
+            </li>
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-circle-o text-primary"></i>
