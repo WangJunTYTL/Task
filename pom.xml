@@ -11,12 +11,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>task-context</module>
-        <module>task-queue</module>
-        <module>task-coding</module>
-        <module>task-dispatch</module>
-        <module>task-system</module>
-        <module>task-admin</module>
+        <module>core</module>
+        <module>admin</module>
     </modules>
 
 
