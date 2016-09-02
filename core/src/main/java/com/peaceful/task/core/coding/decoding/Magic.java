@@ -1,6 +1,7 @@
 package com.peaceful.task.core.coding.decoding;
 
 
+import com.google.inject.Singleton;
 import com.peaceful.task.core.coding.TU;
 import com.peaceful.task.core.coding.TUR;
 
@@ -8,8 +9,8 @@ import com.peaceful.task.core.coding.TUR;
  * @author <a href="mailto:wangjuntytl@163.com">WangJun</a>
  * @version 1.0 16/1/12
  */
+@Singleton
 public class Magic {
-
 
     public TUR go(InvokeContext invokeContext) {
         TU task02 = new TU();

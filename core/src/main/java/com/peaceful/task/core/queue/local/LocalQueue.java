@@ -5,7 +5,8 @@ import com.peaceful.task.core.TaskQueue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * 仅用于本地测试
@@ -30,7 +31,8 @@ public class LocalQueue implements TaskQueue {
         if (map.containsKey(name)) {
             return map.get(name).offer(object);
         } else {
-            map.put(name, new ConcurrentLinkedDeque<String>());
+            Queue<String> queue = new ArrayBlockingQueue<String>(1024);
+            map.put(name, queue);
             return map.get(name).offer(object);
         }
     }

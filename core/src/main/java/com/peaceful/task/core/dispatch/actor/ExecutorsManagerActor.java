@@ -15,6 +15,7 @@ import com.peaceful.task.core.conf.TaskConfigOps;
 import com.peaceful.task.core.dispatch.NoBlockAutoDispatch;
 import com.peaceful.task.core.dispatch.PullTask;
 import com.peaceful.task.core.dispatch.actor.msg.TaskCompleted;
+import com.peaceful.task.core.helper.TaskLog;
 import scala.Option;
 import scala.concurrent.duration.Duration;
 
@@ -27,26 +28,25 @@ import java.util.List;
  * @author <a href="mailto:wangjuntytl@163.com">WangJun</a>
  * @version 1.0 16/1/12
  */
-public class ExecutorManageActor extends UntypedActor {
+public class ExecutorsManagerActor extends UntypedActor {
 
     List<String> executors;
     final DiagnosticLoggingAdapter log = Logging.getLogger(this);
 
     private TaskContext context;
     private PullTask pullTask;
-    public ExecutorManageActor(TaskContext context){
+    public ExecutorsManagerActor(TaskContext context){
         this.context = context;
         this.pullTask = PullTask.get(context);
     }
 
     @Override
     public void preStart() throws Exception {
-        // todo restart 是否会调用
         // 创建对应executor的监管者
         executors = new ArrayList<String>();
         for (Executor executor : context.getConfigOps().executorConfigOps.executorNodeList) {
             getContext().actorOf(Props.create(ExecutorSupervisionActor.class, executor.Class.newInstance(),context), executor.name);
-            log.info("Started {} executor  OK...", executor.name);
+            log.info("Started executor[{}] OK...", executor.name);
             executors.add(executor.name);
         }
         super.preStart();
@@ -62,12 +62,12 @@ public class ExecutorManageActor extends UntypedActor {
     @Override
     public void onReceive(Object message) throws Exception {
         if (message instanceof TUR) {
-            // outside dispatch push task to execute
+            // 来自于TaskDispatcherService的外部队列监控消息
             TUR taskUnit = (TUR) message;
             if (executors.contains(taskUnit.getTask().executor)) {
                 getContext().actorSelection(taskUnit.getTask().executor).tell(taskUnit, getSelf());
             } else {
-                log.warning("execute {} is not exist,the task {} will push to {}", taskUnit.getTask().executor, taskUnit.getTask().id, executors.get(0));
+                TaskLog.DISPATCH_TASK.warn("execute {} is not exist,the task {} will push to {}", taskUnit.getTask().executor, taskUnit.getTask().id, executors.get(0));
                 getContext().actorSelection(executors.get(0)).tell(taskUnit, getSelf());
             }
         } else if (message instanceof TaskCompleted) {
@@ -75,10 +75,10 @@ public class ExecutorManageActor extends UntypedActor {
             Object[] params = new Object[]{completed.id, completed.executor, completed.startTime - completed.submitTime, completed.startTime - completed.createTime, completed.completeTime - completed.startTime};
             // 如果本地的taskUnit对象已经缓存时间超过1s,停止向executor主动推送task unit,这样可以让已经缓存的task unit 尽快执行,因为设计这个系统的初衷并不想把这些task unit缓存到本地
             if (completed.startTime - completed.createTime > 1000) {
-                log.warning("SLOW TASK: completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
+                TaskLog.DISPATCH_TASK.warn("SLOW TASK: completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
                 return;
             }else {
-                log.info("completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
+                TaskLog.COMPLETE_TASK.info("completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
             }
             TUR taskUnit = pullTask.next(completed.queue);
             if (taskUnit != null) {
@@ -90,8 +90,7 @@ public class ExecutorManageActor extends UntypedActor {
     }
 
     /**
-     * top actor supervisor is restart
-     *
+     * executor 运行监管策略
      * @return
      */
     @Override
@@ -100,9 +99,10 @@ public class ExecutorManageActor extends UntypedActor {
                 10, Duration.create("1 minute"), new Function<Throwable, SupervisorStrategy.Directive>() {
             @Override
             public SupervisorStrategy.Directive apply(Throwable t) {
-                log.error("dispatch actor will restart it's children,because of {}", t);
-                // 如果dispatch actor存在异常,则重启
-                return SupervisorStrategy.restart();
+                // 开发者把异常信息抛给了调度系统,调度系统懒得处理最好也不要让调度系统处理异常
+                TaskLog.DISPATCH_TASK.error("executor supervisor[{}] receive task execute exception,you should handle the exception,don't throw to TaskSystem,exception:{}", getSender().path().name(), t);
+                // ignore all exception from executor
+                return SupervisorStrategy.resume();
             }
         });
         return strategy;

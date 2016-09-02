@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.google.common.base.Throwables;
 import com.peaceful.common.util.ExceptionUtils;
 import com.peaceful.task.core.TaskBeanFactory;
 import com.peaceful.task.core.TaskContext;
@@ -20,7 +21,6 @@ import org.perf4j.slf4j.Slf4JStopWatch;
 public class DecorateTask implements Runnable {
 
     TUR taskUnit;
-    private TaskContext context;
     ActorRef executorActor;
     private final LoggingAdapter log;
     private ActorSystem system;
@@ -37,17 +37,18 @@ public class DecorateTask implements Runnable {
     public void run() {
         TaskCompleted completed = new TaskCompleted(taskUnit);
         completed.startTime = System.currentTimeMillis();
+        StopWatch watch = new Slf4JStopWatch();
         try {
-            StopWatch watch = new Slf4JStopWatch();
             taskUnit.run();
             watch.stop("TASK.CONSUME");
             watch.stop("task." + taskUnit.getTask().queueName + ".consume");
         } catch (Exception e) {
-            log.error("{} execute error {}", taskUnit.getTask().id, ExceptionUtils.getStackTrace(e));
+            watch.stop("TASK.CONSUME.ERROR");
+            Throwables.propagate(e);
         } finally {
             completed.completeTime = System.currentTimeMillis();
             // 通知所属ExecutorActor任务完成
-            system.actorSelection("/user/dispatcher/executorDispatch").tell(completed, executorActor);
+            system.actorSelection("/user/dispatcher/executors").tell(completed, executorActor);
         }
 
     }

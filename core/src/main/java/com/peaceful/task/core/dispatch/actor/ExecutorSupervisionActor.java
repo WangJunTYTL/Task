@@ -6,6 +6,7 @@ import akka.actor.UntypedActor;
 import akka.event.DiagnosticLoggingAdapter;
 import akka.event.Logging;
 import akka.japi.Function;
+import com.google.common.base.Throwables;
 import com.peaceful.task.core.TaskContext;
 import com.peaceful.task.core.TaskExecutor;
 import com.peaceful.task.core.coding.TUR;
@@ -13,7 +14,7 @@ import com.peaceful.task.core.dispatch.actor.msg.DecorateTask;
 import scala.concurrent.duration.Duration;
 
 /**
- * execute 监管者,如果executor执行Runnable失败,策略是重启该Actor,目的是重启下面的executor
+ * executor监控者
  * <p/>
  * Created by wangjun on 16/1/12.
  */
@@ -33,29 +34,12 @@ public class ExecutorSupervisionActor extends UntypedActor {
     public void onReceive(Object o) throws Exception {
         if (o instanceof TUR) {
             TUR taskUnit = (TUR) o;
-            DecorateTask decorate = new DecorateTask(context,taskUnit,self());
+            DecorateTask decorate = new DecorateTask(context, taskUnit, self());
             taskExecutor.execute(decorate);
         } else {
             unhandled(o);
         }
     }
 
-    /**
-     * supervisor is restart
-     *
-     * @return
-     */
-    @Override
-    public SupervisorStrategy supervisorStrategy() {
-        SupervisorStrategy strategy = new OneForOneStrategy(
-                10, Duration.create("1 minute"), new Function<Throwable, SupervisorStrategy.Directive>() {
-            @Override
-            public SupervisorStrategy.Directive apply(Throwable t) {
-                log.error("{} supervisor will restart child actor exception {}", self().path().name(), t);
-                return SupervisorStrategy.restart();
-            }
-        });
-        return strategy;
-    }
 
 }

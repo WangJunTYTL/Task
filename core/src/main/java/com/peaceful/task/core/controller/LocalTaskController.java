@@ -1,6 +1,7 @@
 package com.peaceful.task.core.controller;
 
 import com.peaceful.task.core.*;
+import com.peaceful.task.core.conf.ExecutorsConf;
 import com.peaceful.task.core.dispatch.TaskMeta;
 import com.peaceful.task.core.conf.Executor;
 import com.peaceful.task.core.conf.TaskConfigOps;
@@ -35,12 +36,10 @@ public class LocalTaskController implements TaskController {
         for (Executor e : ops.executorConfigOps.executorNodeList) {
             EXECUTOR_LIST.add(e);
         }
-        // // TODO: 16-8-27 线程池统一
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(8);
         // 观察任务的执行情况，在两个任务容器中进行切换
-        executorService.scheduleAtFixedRate(new ObserveTask(), 0, 5, TimeUnit.MINUTES);
+        ExecutorsConf.SINGLE_THREAD_SCHEDULED.scheduleAtFixedRate(new ObserveTask(), 0, 5, TimeUnit.MINUTES);
         // 清理过期的任务
-        executorService.scheduleAtFixedRate(new ClearExpireTask(), 0, 8, TimeUnit.HOURS);
+        ExecutorsConf.SINGLE_THREAD_SCHEDULED.scheduleAtFixedRate(new ClearExpireTask(), 0, 8, TimeUnit.HOURS);
     }
 
 

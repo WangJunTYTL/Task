@@ -1,7 +1,7 @@
 package com.peaceful.task.core.controller;
 
 import com.peaceful.task.core.TaskController;
-import com.peaceful.task.core.cluster.Node;
+import com.peaceful.task.core.helper.Node;
 
 import java.util.Collection;
 import java.util.Map;

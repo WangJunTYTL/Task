@@ -5,11 +5,11 @@ import akka.event.DiagnosticLoggingAdapter;
 import akka.event.Logging;
 import akka.japi.Function;
 import com.peaceful.task.core.TaskContext;
-import com.peaceful.task.core.error.GetNextTaskException;
+import com.peaceful.task.core.helper.GetNextTaskException;
 import scala.concurrent.duration.Duration;
 
 /**
- * task 系统的top actor,负责整个系统的监管策略,如果有异常抛到该actor,讲重启整个系统
+ * 其只负责ExecutorsManagerActor的运行情况
  *
  * @author <a href="mailto:wangjuntytl@163.com">WangJun</a>
  * @version 1.0 16/1/12
@@ -26,8 +26,7 @@ public class DispatchManagerActor extends UntypedActor {
 
     @Override
     public void preStart() throws Exception {
-//        execute dispatch actor 负责 整个Task系统的调度
-        getContext().actorOf(Props.create(ExecutorManageActor.class, context), "executorDispatch");
+        getContext().actorOf(Props.create(ExecutorsManagerActor.class, context), "executors");
 //        public  actor 作为其它需要利用到actor地方的监管者
         getContext().actorOf(Props.create(PublicActor.class), "public");
         super.preStart();

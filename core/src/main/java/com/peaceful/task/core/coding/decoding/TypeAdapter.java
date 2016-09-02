@@ -1,5 +1,6 @@
 package com.peaceful.task.core.coding.decoding;
 
+import com.google.inject.Singleton;
 import com.peaceful.common.util.chain.Context;
 import com.peaceful.task.core.coding.decoding.impl.*;
 import org.slf4j.Logger;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0 15/8/28
  * @since 1.6
  */
-
+@Singleton
 public class TypeAdapter {
 
     Logger logger = LoggerFactory.getLogger(getClass());

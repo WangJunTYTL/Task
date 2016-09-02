@@ -31,8 +31,9 @@ public class NoBlockAutoDispatch extends AbstractIdleService {
     @Inject
     private TaskConfigOps ops;
 
+    // 接收来自TaskDispatchService的消息,并将消息直接传入到ExecutorsManagerActor
     public void tell(TUR tur) {
-        system.actorSelection("/user/dispatcher/executorDispatch").tell(tur, ActorRef.noSender());
+        system.actorSelection("/user/dispatcher/executors").tell(tur,system.actorFor("/user/dispatcher/"));
     }
 
     protected void startUp() throws Exception {

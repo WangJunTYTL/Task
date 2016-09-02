@@ -7,7 +7,8 @@ import com.google.inject.Singleton;
 import com.peaceful.common.redis.service.Redis;
 import com.peaceful.common.util.ExceptionUtils;
 import com.peaceful.task.core.TaskQueue;
-import com.peaceful.task.core.cluster.Node;
+import com.peaceful.task.core.conf.ExecutorsConf;
+import com.peaceful.task.core.helper.Node;
 import com.peaceful.task.core.conf.Executor;
 import com.peaceful.task.core.conf.TaskConfigOps;
 import com.peaceful.task.core.dispatch.TaskMeta;
@@ -19,8 +20,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,7 +39,6 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
     private static String task_node_list = "";
     // 执行器列表
     private static String task_executor_list = "";
-
     private TaskQueue queue;
     private final static Logger LOGGER = LoggerFactory.getLogger(RedisCloudTaskController.class);
 
@@ -49,18 +47,11 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
         super(ops,queue);
         this.queue = queue;
         prefix += ops.name;
-        task_list = prefix + "-CONFIG-LIST"; // 任务控制配置key
-        task_node_list = prefix + "-NODE" + "-LIST"; // 集群列表key
-        task_executor_list = prefix + "-EXECUTOR-LIST"; // 执行器key
-        // TODO: 16-8-27 thread pool 
-        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-        // 刷新任务配置与集群配置
-        executorService.scheduleAtFixedRate(new RefreshController(), 1, 2, TimeUnit.SECONDS);
-        // 启动时把执行器都写入到redis中
-        Redis.cmd().del(task_executor_list);
-        for (Executor e : EXECUTOR_LIST) {
-            Redis.cmd().hset(task_executor_list, e.name, e.implementation);
-        }
+        task_list = prefix + "-CONFIG-LIST";
+        task_node_list = prefix + "-NODE" + "-LIST";
+        task_executor_list = prefix + "-EXECUTOR-LIST";
+        ExecutorsConf.SINGLE_THREAD_SCHEDULED.scheduleWithFixedDelay(new RefreshController(), 1, 2, TimeUnit.SECONDS);
+        ExecutorsConf.SINGLE_THREAD_SCHEDULED.submit(new UploadExecutorsOnStart());
     }
 
     private void upload() {
@@ -189,6 +180,18 @@ public class RedisCloudTaskController extends LocalTaskController implements Clo
                 LOGGER.error("refresh cluster controller error:{}", ExceptionUtils.getStackTrace(e));
             }
 
+        }
+    }
+
+    private class UploadExecutorsOnStart implements Runnable{
+
+        @Override
+        public void run() {
+            // 启动时把执行器都写入到redis中
+            Redis.cmd().del(task_executor_list);
+            for (Executor e : EXECUTOR_LIST) {
+                Redis.cmd().hset(task_executor_list, e.name, e.implementation);
+            }
         }
     }
 

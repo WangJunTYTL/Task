@@ -46,13 +46,13 @@ public class TaskConfigOps {
         StringBuffer buffer = new StringBuffer();
         buffer.append("task conf info").append("\n");
         buffer.append("------------------------------------------------------------").append("\n");
-        buffer.append("version:").append(VERSION).append("\n");
         buffer.append("hostname:").append(NetHelper.getHostname()).append("\n");
-        buffer.append("name:").append(name).append("\n");
-        buffer.append("boot.mode:").append(bootMode).append("\n");
-        buffer.append("queue.impl:").append(queue).append("\n");
-        buffer.append("bean.factory.impl:").append(beanFactory).append("\n");
-        buffer.append("executor.list:").append(executorConfigOps).append("\n");
+        buffer.append("task.version:").append(VERSION).append("\n");
+        buffer.append("task.name:").append(name).append("\n");
+        buffer.append("task.boot.mode:").append(bootMode).append("\n");
+        buffer.append("task.queue.impl:").append(queue).append("\n");
+        buffer.append("task.bean.factory.impl:").append(beanFactory).append("\n");
+        buffer.append("task.executor.list:").append(executorConfigOps).append("\n");
         buffer.append("------------------------------------------------------------");
         return buffer.toString();
     }

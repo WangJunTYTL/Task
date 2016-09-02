@@ -8,8 +8,10 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
+ * 任务描述协议
+ *
  * 每次方法的调用都是一个Task的生成,通过{@link TaskCoding#encoding(Class, Method, Object[])}可以把
- * 方法的调用指令信息编码为一个Task对象,该对象可以在后期进行状态序列化
+ * 方法的调用指令信息编码为一个TU对象,支持状态序列化
  *
  * @author <a href="mailto:wangjuntytl@163.com">WangJun</a>
  * @version 1.0 16/1/9
@@ -31,7 +33,7 @@ public class TU implements Serializable {
     public Object[] args;
     // 任务最终的执行器
     public String executor = "default";
-    // 该任务单元的所属版本号
+    // 任务协议版本
     public String version = "2.0";
     // 任务提交时间
     public long submitTime;

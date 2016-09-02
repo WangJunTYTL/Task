@@ -12,9 +12,10 @@ import java.util.Set;
  */
 public class Hello {
 
-    @Task(value = "Test06"/*,executor = "jucExecutor"*/)
+    @Task(value = "Test06",executor = "jucExecutor")
     public void say(String msg) throws InterruptedException {
 //        Thread.sleep(1000);
+        int x= 1 /0;
         System.out.println(msg);
     }
 

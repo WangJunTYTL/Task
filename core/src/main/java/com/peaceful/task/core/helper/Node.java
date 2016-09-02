@@ -1,4 +1,4 @@
-package com.peaceful.task.core.cluster;
+package com.peaceful.task.core.helper;
 
 /**
  * SimpleTaskContext 集群节点信息

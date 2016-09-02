@@ -7,6 +7,7 @@ import com.peaceful.task.core.conf.TaskConfigOps;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.peaceful.common.util.ExceptionUtils;
+import com.peaceful.task.core.helper.TaskLog;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.InvocationHandler;
 import org.perf4j.StopWatch;
@@ -57,7 +58,7 @@ public class TaskProxyByCglib implements TaskProxy {
                         queue.push(ops.name + "-" + task02.queueName, cmd);
                         controller.insertTask(task02.queueName);
                         monitor.produce(task02);
-                        logger.debug("submit task {}", task02);
+                        TaskLog.SUBMIT_TASK.info("submit task {}", task02);
                         watch.stop("TASK.PRODUCE");
                         watch.stop("task." + task02.queueName + ".produce");
                     } catch (Exception e) {
