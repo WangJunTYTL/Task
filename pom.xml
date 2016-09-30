@@ -4,15 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
     <groupId>com.peaceful</groupId>
     <artifactId>task</artifactId>
     <version>2.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>core</module>
-        <module>admin</module>
+        <module>task-kernal</module>
+        <module>task-ops</module>
     </modules>
 
 
