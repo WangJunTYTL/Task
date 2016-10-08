@@ -12,6 +12,6 @@ public interface TaskBeanFactory {
 
     <T> T getBean(Class<T> zclass);
 
-    void  newInstance(Object instance);
+    void  newInstance(Class zClass,Object instance);
 
 }

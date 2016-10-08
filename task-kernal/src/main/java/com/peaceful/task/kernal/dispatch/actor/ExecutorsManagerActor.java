@@ -32,7 +32,8 @@ public class ExecutorsManagerActor extends UntypedActor {
 
     private TaskContext context;
     private PullTask pullTask;
-    public ExecutorsManagerActor(TaskContext context){
+
+    public ExecutorsManagerActor(TaskContext context) {
         this.context = context;
         this.pullTask = PullTask.get(context);
     }
@@ -42,7 +43,7 @@ public class ExecutorsManagerActor extends UntypedActor {
         // 创建对应executor的监管者
         executors = new ArrayList<String>();
         for (Executor executor : context.getConfigOps().executorConfigOps.executorNodeList) {
-            getContext().actorOf(Props.create(ExecutorSupervisionActor.class, executor.Class.newInstance(),context), executor.name);
+            getContext().actorOf(Props.create(ExecutorSupervisionActor.class, executor.Class.newInstance(), context), executor.name);
             log.info("Started executor[{}] OK...", executor.name);
             executors.add(executor.name);
         }
@@ -52,7 +53,7 @@ public class ExecutorsManagerActor extends UntypedActor {
     @Override
     public void preRestart(Throwable reason, Option<Object> message) throws Exception {
         // 处理失败的异常信息和最后处理的消息将发送过来
-        log.error("{} will preRestart,resone:{},message: {}",getSelf().path().name(),reason,message);
+        log.error("{} will preRestart,resone:{},message: {}", getSelf().path().name(), reason, message);
         super.preRestart(reason, message);
     }
 
@@ -68,13 +69,17 @@ public class ExecutorsManagerActor extends UntypedActor {
                 getContext().actorSelection(executors.get(0)).tell(taskUnit, getSelf());
             }
         } else if (message instanceof TaskCompleted) {
+            // 收到任务执行完毕的消息
             TaskCompleted completed = (TaskCompleted) message;
+            if (completed.isHasException) {
+                context.getTaskMonitor().exceptionIncr(completed.queue);
+            }
             Object[] params = new Object[]{completed.id, completed.executor, completed.startTime - completed.submitTime, completed.startTime - completed.createTime, completed.completeTime - completed.startTime};
             // 如果本地的taskUnit对象已经缓存时间超过1s,停止向executor主动推送task unit,这样可以让已经缓存的task unit 尽快执行,因为设计这个系统的初衷并不想把这些task unit缓存到本地
             if (completed.startTime - completed.createTime > 1000) {
                 TaskLog.DISPATCH_TASK.warn("SLOW TASK: completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
                 return;
-            }else {
+            } else {
                 TaskLog.COMPLETE_TASK.info("completed {} on {} remote wait {}ms local wait {}ms cost {}ms", params);
             }
             TUR taskUnit = pullTask.next(completed.queue);
@@ -88,6 +93,7 @@ public class ExecutorsManagerActor extends UntypedActor {
 
     /**
      * executor 运行监管策略
+     *
      * @return
      */
     @Override

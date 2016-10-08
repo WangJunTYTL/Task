@@ -25,6 +25,8 @@ public class TaskCompleted {
     // task 完成时间
     public long completeTime;
 
+    public boolean isHasException;
+
     public TaskCompleted(TUR taskUnit) {
         this.id = taskUnit.getTask().id;
         this.queue = taskUnit.getTask().queueName;

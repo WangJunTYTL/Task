@@ -11,4 +11,6 @@ public interface TaskMonitor {
     void produce(TU tu);
 
     void consume(TU tu);
+
+    void exceptionIncr(String name);
 }

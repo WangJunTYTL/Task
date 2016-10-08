@@ -46,14 +46,14 @@ public class TUR implements Runnable {
         try {
             method = tu.aclass.getMethod(tu.method, tu.parameterTypes);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("execute task fail:task->" + tu.id + ", not found method " + tu.aclass.getSimpleName() + "." + tu.method + " cause:" + ExceptionUtils.getStackTrace(e));
+            throw new RuntimeException("task execute error:task->" + tu.id + ", not found method " + tu.aclass.getSimpleName() + "." + tu.method + " cause:" + ExceptionUtils.getStackTrace(e));
         }
         // 获取调用bean
         Object bean = null;
         try {
             bean = context.getTaskBeanFactory().getBean(tu.aclass);
         } catch (Exception e) {
-            throw new RuntimeException("execute task fail:task->" + tu.id + " not found bean instance " + tu.aclass.getSimpleName() + "." + tu.method + " cause:" + ExceptionUtils.getStackTrace(e));
+            throw new RuntimeException("task execute error:task->" + tu.id + " not found bean instance " + tu.aclass.getSimpleName() + "." + tu.method + " cause:" + ExceptionUtils.getStackTrace(e));
         }
         Preconditions.checkState(method != null, "execute task fail,Not Fount " + tu.aclass.getName() + "." + tu.method);
         Preconditions.checkState(bean != null, "execute task fail,Not Fount bean instance for " + tu.aclass.getName() + "." + tu.method);
@@ -61,7 +61,7 @@ public class TUR implements Runnable {
         try {
             method.invoke(bean, tu.args);
         } catch (Exception e) {
-            TaskLog.DISPATCH_TASK.error("execute task fail:task->{},TaskSystem only log the exception but catch it,cause:{}",this,Throwables.getStackTraceAsString(unwrapThrowable(e)));
+            TaskLog.DISPATCH_TASK.error("task execute error:task->{},TaskSystem only log the exception but catch it,cause:{}",this,Throwables.getStackTraceAsString(unwrapThrowable(e)));
             Throwables.propagate(unwrapThrowable(e));
         }
     }

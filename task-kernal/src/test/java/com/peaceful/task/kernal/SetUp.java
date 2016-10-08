@@ -12,7 +12,7 @@ public class SetUp {
 
         Task task = Task.create();
         Hello hello = task.registerASyncClass(Hello.class);
-        int time = 1;
+        int time = 1000;
         for (int i=0;i< time;i++) {
             // 基本类型测试
             hello.say("hello world!");

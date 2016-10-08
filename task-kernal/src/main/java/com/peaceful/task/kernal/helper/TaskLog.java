@@ -10,7 +10,8 @@ import org.slf4j.LoggerFactory;
 public class TaskLog {
 
     public static final Logger SUBMIT_TASK = LoggerFactory.getLogger("task.kernal.log.client.submit");
-    public static final Logger DISPATCH_TASK = LoggerFactory.getLogger("task.kernal.log.server.dispatch");
-    public static final Logger COMPLETE_TASK = LoggerFactory.getLogger("task.kernal.log.server.dispatch.complete");
+    public static final Logger DISPATCH_TASK = LoggerFactory.getLogger("task.kernal.log.dispatch");
+    public static final Logger COMPLETE_TASK = LoggerFactory.getLogger("task.kernal.log.dispatch.complete");
+    public static final Logger ERROR_TASK = LoggerFactory.getLogger("task.kernal.log.dispatch.complete");
 
 }

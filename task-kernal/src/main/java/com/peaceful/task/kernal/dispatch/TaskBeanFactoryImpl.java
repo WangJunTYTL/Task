@@ -38,8 +38,7 @@ public class TaskBeanFactoryImpl implements TaskBeanFactory {
     }
 
     @Override
-    public void newInstance(Object instance) {
-        Class zClass = instance.getClass();
+    public void newInstance(Class zClass,Object instance) {
         if (!ASYNC_TASK_INSTANCE.containsKey(zClass)) {
             ASYNC_TASK_INSTANCE.put(zClass, instance);
             LOGGER.info("new instance info ,insert instance suc {}", zClass);

@@ -38,16 +38,16 @@ public class DecorateTask implements Runnable {
         StopWatch watch = new Slf4JStopWatch();
         try {
             taskUnit.run();
-            watch.stop("TASK.CONSUME");
+            watch.stop("task.consume");
             watch.stop("task." + taskUnit.getTask().queueName + ".consume");
         } catch (Exception e) {
-            watch.stop("TASK.CONSUME.ERROR");
+            watch.stop("task.consume.error");
+            completed.isHasException = true;
             Throwables.propagate(e);
         } finally {
             completed.completeTime = System.currentTimeMillis();
             // 通知所属ExecutorActor任务完成
             system.actorSelection("/user/dispatcher/executors").tell(completed, executorActor);
         }
-
     }
 }

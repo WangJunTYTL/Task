@@ -2,8 +2,6 @@ package com.peaceful.task.kernal.conf;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.peaceful.common.util.chain.BaseContext;
-import com.peaceful.common.util.chain.Context;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigObject;
@@ -11,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,7 +42,7 @@ public class TaskConfService {
         String customerPath = "task.conf";
         String conf = System.getProperty("task.conf.file");
         if (StringUtils.isNotEmpty(conf)) customerPath = conf;
-        if (LoadConfigFileParse.class.getClassLoader().getResource(customerPath) != null) {
+        if (Thread.currentThread().getContextClassLoader().getResource(customerPath) != null) {
             Config _config = ConfigFactory.load(customerPath);
             // 合并用户配置和默认配置
             config = _config.withFallback(config);
